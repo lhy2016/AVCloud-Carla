@@ -24,7 +24,7 @@ class Vehicle(models.Model):
 class Rental(models.Model):
     time_started = models.DateTimeField(default=now)
     time_finished = models.DateTimeField()
-    user_id = models.ForeignKey(User)
-    vehicle_id = models.ForeignKey(Vehicle)
+    user_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    vehicle_id = models.ForeignKey(Vehicle, on_delete=models.SET_NULL, null=True)
     distance = models.PositiveIntegerField()
     duration = models.PositiveIntegerField()
