@@ -28,3 +28,4 @@ class Rental(models.Model):
     vehicle_id = models.ForeignKey(Vehicle, on_delete=models.SET_NULL, null=True)
     distance = models.PositiveIntegerField()
     duration = models.PositiveIntegerField()
+    active_status = models.BooleanField(default=False)

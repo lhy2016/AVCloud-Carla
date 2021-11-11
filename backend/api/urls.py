@@ -14,6 +14,6 @@ urlpatterns = [
     path('markAvailable/<int:id>', views.mark_available, name="mark_available"),
     path('markUnavailable/<int:id>', views.mark_unavailable, name="mark_unavailable"),
     path('rent_vehicle', views.rent_vehicle, name="rent_vehicle"),
-    path('return_vehicle', views.return_vehicle, name="return_vehicle")
+    path('return_vehicle/<int:id>', views.return_vehicle, name="return_vehicle")
 
 ]

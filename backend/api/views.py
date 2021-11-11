@@ -43,7 +43,22 @@ def mark_unavailable(request, id):
     return HttpResponse("<h1>This is vehicle rental homepage</h1>")
 
 def rent_vehicle(request):
-    pass
+    time_started = request.POST.get('time_started')
+    time_finished = request.POST.get('time_finished')
+    distance = request.POST.get('distance')
+    duration = request.POST.get('duration')
+    user_id_id = request.POST.get('user_id_id')
+    vehicle_id_id = request.POST.get('vehicle_id_id')
+    active_status = request.POST.get('active_status')
 
-def return_vehicle(request):
-    pass
+    rental_vehicle = Rental(time_started=time_started, time_finished=time_finished, distance=distance, duration=duration,
+    user_id_id=user_id_id, vehicle_id_id=vehicle_id_id, active_status=active_status)
+    rental_vehicle.save()
+    return HttpResponse("<h1>Vehicle is rented</h1>")
+
+
+def return_vehicle(request, id):
+    active_status = "False"
+    rental_vehicle = Rental.objects.filter(id=id).update(is_active=active_status)
+    return HttpResponse("<h1>Car has been returned</h1>")
+ 
