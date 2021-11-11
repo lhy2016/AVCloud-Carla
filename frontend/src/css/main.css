@@ -1,0 +1,6 @@
+#__react-alert__ > div > div > div {
+    min-width: 400px !important;
+}
+#__react-alert__ > div > div > div > span {
+    text-transform:none;
+}
