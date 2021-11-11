@@ -19,7 +19,7 @@ class Vehicle(models.Model):
     year = models.PositiveSmallIntegerField()
     color = models.CharField(max_length=20)
     created_on = models.DateTimeField(default=now)
-    is_deleted = models.BooleanField(default=False)
+    is_available = models.BooleanField(default=False)
 
 class Rental(models.Model):
     time_started = models.DateTimeField(default=now)
@@ -28,3 +28,4 @@ class Rental(models.Model):
     vehicle_id = models.ForeignKey(Vehicle, on_delete=models.SET_NULL, null=True)
     distance = models.PositiveIntegerField()
     duration = models.PositiveIntegerField()
+    active_status = models.BooleanField(default=False)
