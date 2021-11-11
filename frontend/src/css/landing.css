@@ -1,0 +1,29 @@
+body {
+    margin: 0px;
+}
+#site-container {
+    background-color: rgba(245, 245, 245, 0.623);
+    min-height: 600px;
+    height:100vh;
+}
+#form-container {
+    height:100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+.landing-form {
+    padding: 20px;
+    border-radius: 0px 10px 10px;
+    background-color: rgb(195, 218, 224);
+}
+#signup-login {
+    width: 350px;
+    height: 400px;
+}
+#signup-login > ul[role="tablist"] {
+    margin-bottom: 1px;
+    border-bottom-width: 0px;
+}
