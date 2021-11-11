@@ -1,8 +1,10 @@
+import Landing from "./Landing"
 
 function App() {
   return (
     <div className="App">
-      Hello World
+      <Landing>
+      </Landing>
     </div>
   );
 }
