@@ -7,4 +7,4 @@ import json
 # Create your views here.
 @api_view(['POST'])
 def signup(request):
-    return Response(json.dumps({"hello": "world"}))
+    return Response({"hello": "world"})
