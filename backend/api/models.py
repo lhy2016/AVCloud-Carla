@@ -19,7 +19,7 @@ class Vehicle(models.Model):
     year = models.PositiveSmallIntegerField()
     color = models.CharField(max_length=20)
     created_on = models.DateTimeField(default=now)
-    is_deleted = models.BooleanField(default=False)
+    is_available = models.BooleanField(default=False)
 
 class Rental(models.Model):
     time_started = models.DateTimeField(default=now)

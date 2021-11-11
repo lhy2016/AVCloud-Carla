@@ -15,8 +15,8 @@ def add_vehicle(request):
     year = request.POST.get("Year")
     color = request.POST.get("Color")
     created_on = request.POST.get("Date")
-    is_deleted = request.POST.get("DeletedFlag")
-    vehicle = Vehicle(make=make, model=model, year=year, color=color, created_on=created_on, is_deleted=is_deleted)
+    is_available = request.POST.get("AvailableFlag")
+    vehicle = Vehicle(make=make, model=model, year=year, color=color, created_on=created_on, is_available=is_available)
     vehicle.save()
     return HttpResponse("<h1>Added Vehicle</h1>")
 """"
