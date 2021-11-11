@@ -7,8 +7,10 @@ urlpatterns = [
     #^$ means this is the default homepage page of the section..
     #/homepage/
     path('', views.homepage, name="homepage"),
-    path('add_vehicle/<str:make>/<str:model>/<str:year>/<str:color>/<str:created_on>/<str:is_deleted>', views.add_vehicle, name="add_vehicle"),
-    path('remove', views.remove_vehicle, name="remove_vehicle"),
+    path('add_vehicle', views.add_vehicle, name="add_vehicle"),
+    # This is how to do a GET REQUEST
+    # path('add_vehicle/<str:make>/<str:model>/<str:year>/<str:color>/<str:created_on>/<str:is_deleted>', views.add_vehicle, name="add_vehicle"),
+    path('remove/<int:id>', views.remove_vehicle, name="remove_vehicle"),
     path('markAvailable', views.mark_available, name="mark_available"),
     path('markUnavailable', views.mark_unavailable, name="mark_unavailable"),
     path('rent_vehicle', views.rent_vehicle, name="rent_vehicle"),
