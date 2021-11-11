@@ -32,10 +32,14 @@ def remove_vehicle(request, id):
     vehicle_obj.delete()
     return HttpResponse("<h1>Rwmove vehicle</h1>")
 
-def mark_available(request):
+def mark_available(request, id):
+    availability = "True"
+    vehicle_obj = Vehicle.objects.filter(id=id).update(is_available=availability)
     return HttpResponse("<h1>This is vehicle rental homepage</h1>")
 
-def mark_unavailable(request):
+def mark_unavailable(request, id):
+    availability = "False"
+    vehicle_obj = Vehicle.objects.filter(id=id).update(is_available=availability)
     return HttpResponse("<h1>This is vehicle rental homepage</h1>")
 
 def rent_vehicle(request):

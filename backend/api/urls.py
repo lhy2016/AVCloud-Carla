@@ -11,8 +11,8 @@ urlpatterns = [
     # This is how to do a GET REQUEST
     # path('add_vehicle/<str:make>/<str:model>/<str:year>/<str:color>/<str:created_on>/<str:is_deleted>', views.add_vehicle, name="add_vehicle"),
     path('remove/<int:id>', views.remove_vehicle, name="remove_vehicle"),
-    path('markAvailable', views.mark_available, name="mark_available"),
-    path('markUnavailable', views.mark_unavailable, name="mark_unavailable"),
+    path('markAvailable/<int:id>', views.mark_available, name="mark_available"),
+    path('markUnavailable/<int:id>', views.mark_unavailable, name="mark_unavailable"),
     path('rent_vehicle', views.rent_vehicle, name="rent_vehicle"),
     path('return_vehicle', views.return_vehicle, name="return_vehicle")
 
