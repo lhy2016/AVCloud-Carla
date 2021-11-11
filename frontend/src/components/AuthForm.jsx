@@ -12,7 +12,7 @@ function AuthForm(props) {
 
     function handleFormSubmit(action) {
         axios
-          .post(window.serverPrefix + action, formInput)
+          .post(window.serverPrefix + "user/" + action, formInput)
           .then((response) => {
             console.log(response);
           })
