@@ -4,20 +4,26 @@ import axios from "axios"
 import React, { useState } from 'react'
 import "../js/config"
 
+import { useAlert } from 'react-alert'
+
 
 function AuthForm(props) {
     const [formInput, updateInput] = useState({ username: "", password: ""})
-    const username = formInput.username
-    const password = formInput.password
-
+    const alert = useAlert()    
+    
     function handleFormSubmit(action) {
         axios
           .post(window.serverPrefix + "user/" + action, formInput)
           .then((response) => {
-            console.log(response);
+            if (response.status === 201) {
+                alert.success("User created, please Login")
+                props.signupCallBack("login");
+                updateInput(previous=>{})
+            }
           })
-          .catch((error) => {
-            console.log(error);
+          .catch((err) => {
+              console.log(err.response.data)
+              alert.error("Error "+err.response.status.toString()+": "+err.response.data["error"]);
           });
     }
 
