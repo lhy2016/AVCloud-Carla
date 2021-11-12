@@ -4,18 +4,27 @@ import Tab from "react-bootstrap/Tab"
 import AuthForm from "./AuthForm"
 
 import "../css/landing.css"
-function Landing(props) {
+import React, { useState } from 'react'
 
+function Landing(props) {
+    const [curTab, updateTab] = useState("login")
+
+    function toogleTab(tab) {
+        updateTab(previous=>tab);
+    }
     return (
         <div id="site-container">
             <Container id="form-container">
                 <div id="signup-login">
-                    <Tabs defaultActiveKey="signup" id="landing-tabs">
-                        <Tab eventKey="signup" title="Sign Up">
-                            <AuthForm action="signup">
+                    <Tabs id="landing-tabs"
+                        activeKey={curTab}
+                        onSelect={(key)=> {updateTab( (previous) => {return key} )}}
+                    >
+                        <Tab eventKey="signup" title="Sign Up" > 
+                            <AuthForm action="signup" signupCallBack={toogleTab}>
                             </AuthForm>
                         </Tab>
-                        <Tab eventKey="login" title="Login">
+                        <Tab eventKey="login" title="Login" >
                             <AuthForm action="login">
                             </AuthForm>
                         </Tab>
