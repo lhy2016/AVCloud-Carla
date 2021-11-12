@@ -10,3 +10,6 @@ class User(models.Model):
     
     # array of objects: [{"vehicle_id": 1, "archived_on": formatted datetime string},...]
     archived_vehicles = models.JSONField()
+
+    def __str__(self):
+        return self.username
