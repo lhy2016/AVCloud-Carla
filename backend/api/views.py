@@ -1,14 +1,21 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import *
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from django.core import serializers
+from datetime import datetime
+
 # Create your views here.
 
 def homepage(request):
     print("inside homepage")
     # return HttpResponse("<h1>This is vehicle rental homepage</h1>")
-    return render(request, "homepage.html")
+    # return render(request, "homepage.html")
+    return render(request, "rent_vehicle.html")
 
-
+@api_view(['POST'])
 def add_vehicle(request):
     make = request.POST.get("Make")
     model = request.POST.get("Model")
@@ -16,9 +23,14 @@ def add_vehicle(request):
     color = request.POST.get("Color")
     created_on = request.POST.get("Date")
     is_available = request.POST.get("AvailableFlag")
+
+    created_on = datetime.strptime(created_on, '%Y-%m-%d').isoformat()
     vehicle = Vehicle(make=make, model=model, year=year, color=color, created_on=created_on, is_available=is_available)
     vehicle.save()
-    return HttpResponse("<h1>Added Vehicle</h1>")
+    vehicle_obj = Vehicle.objects.get(id=vehicle.id)
+    serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
+    print(f"Serialized is: {serialized_vehicle}")
+    return Response(serialized_vehicle, status=status.HTTP_200_OK)
 """"
     This is how you handle a GET request
 """
@@ -27,20 +39,26 @@ def add_vehicle(request):
 #     vehicle.save()
 #     return HttpResponse("<h1>Added Vehicle</h1>")
 
+@api_view(['GET'])
 def remove_vehicle(request, id):
     vehicle_obj = Vehicle.objects.get(id=id)
     vehicle_obj.delete()
-    return HttpResponse("<h1>Rwmove vehicle</h1>")
+    serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
+    return Response(serialized_vehicle, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
 def mark_available(request, id):
     availability = "True"
     vehicle_obj = Vehicle.objects.filter(id=id).update(is_available=availability)
-    return HttpResponse("<h1>This is vehicle rental homepage</h1>")
+    serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
+    return Response(serialized_vehicle, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
 def mark_unavailable(request, id):
     availability = "False"
     vehicle_obj = Vehicle.objects.filter(id=id).update(is_available=availability)
-    return HttpResponse("<h1>This is vehicle rental homepage</h1>")
+    serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
+    return Response(serialized_vehicle, status=status.HTTP_200_OK)
 
 def rent_vehicle(request):
     time_started = request.POST.get('time_started')
