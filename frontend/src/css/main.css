@@ -4,3 +4,11 @@
 #__react-alert__ > div > div > div > span {
     text-transform:none;
 }
+body {
+    margin: 0px;
+}
+#site-container {
+    background-color: rgba(245, 245, 245, 0.623);
+    min-height: 600px;
+    height:100vh;
+}
