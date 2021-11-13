@@ -12,7 +12,10 @@ function App() {
     containerStyle: {
     }
   };
+
+
   return (
+    <div id="site-container">
     <BrowserRouter>
       <Provider template={AlertTemplate} {...alertOptions}>
         <Routes>
@@ -21,6 +24,7 @@ function App() {
         </Routes>
       </Provider>
     </BrowserRouter>
+    </div>
   );
 }
 
