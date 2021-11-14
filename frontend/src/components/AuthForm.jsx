@@ -27,6 +27,7 @@ function AuthForm(props) {
                 date.setDate(date.getDate() + 7);
                 var dateString = date.toUTCString()
                 document.cookie = "loggedUser="+response.data["user"]+"; expires="+dateString+"; path=/";
+                document.cookie = "userId="+response.data["id"]+"; expires="+dateString+"; path=/";
                 
                 navigate('/dashboard')
             }

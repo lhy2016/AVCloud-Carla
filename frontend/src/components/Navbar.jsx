@@ -8,6 +8,7 @@ function Navbar(props) {
     const navigate = useNavigate();
     function logout() {
         document.cookie = "loggedUser=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "userId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         navigate("/");
     }
     return (
