@@ -7,6 +7,7 @@ import { positions, Provider } from "react-alert";
 import AlertTemplate from "react-alert-template-basic";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "../css/main.css";
+import "../js/config"
 
 function App() {
   const alertOptions = {

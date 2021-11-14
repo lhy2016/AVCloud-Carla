@@ -15,13 +15,13 @@ function Navbar(props) {
         <Row className='color-row'>
             <Col md="3" style={{display:"flex"}}>
                 <div className="row-flex ">
-                    Hello, <span class='loggedUser-text'>{loggedUser}</span>
+                    Hello, <span className='loggedUser-text'>{loggedUser}</span>
                     <Badge bg="info">{loggedUser === "admin" ? "Administrator" : "Public User"}</Badge>
                 </div>
             </Col>
             <Col md="7" className="nav-link-container">
                 <Link to="/dashboard" className={props.active == "dashboard" ? "active":""}>Dashboard</Link>
-                <Link exact to="/rent" className={props.active == "rent" ? "active":""}>Rent</Link>
+                <Link to="/rent" className={props.active == "rent" ? "active":""}>Rent</Link>
                 <Link to="/track" className={props.active == "track" ? "active":""}>Track</Link>
                 { isAdminLoggedIn() ?
                     <Link to="/maintaincerecord" className={props.active == "maintaincerecord" ? "active":""}>
