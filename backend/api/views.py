@@ -19,15 +19,15 @@ def homepage(request):
 
 @api_view(['POST'])
 def add_vehicle(request):
-    make = request.POST.get("Make")
-    model = request.POST.get("Model")
-    year = request.POST.get("Year")
-    color = request.POST.get("Color")
-    created_on = request.POST.get("Date")
+    name = request.POST.get("name")
+    make = request.POST.get("make")
+    color = request.POST.get("color")
+    print("******************************************PRINT PRINT PRINT")
+    print([name, make, color])
+    
     # is_available = request.POST.get("AvailableFlag")
 
-    created_on = datetime.strptime(created_on, '%Y-%m-%d').isoformat()
-    vehicle = Vehicle(make=make, model=model, year=year, color=color, created_on=created_on)
+    vehicle = Vehicle(name=name, make=make, color=color)
     vehicle.save()
     vehicle_obj = Vehicle.objects.get(id=vehicle.id)
     serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])

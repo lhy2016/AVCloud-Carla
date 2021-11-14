@@ -7,9 +7,8 @@ from user.models import User
 class Vehicle(models.Model):
 
     # is_active = models.BooleanField(default=True)
+    name = models.TextField(max_length=50, default='')
     make = models.CharField(max_length=50)
-    model = models.CharField(max_length=50)
-    year = models.PositiveSmallIntegerField()
     color = models.CharField(max_length=20)
     created_on = models.DateTimeField(default=now)
     # is_available = models.BooleanField(default=False)
