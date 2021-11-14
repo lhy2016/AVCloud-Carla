@@ -9,7 +9,7 @@ import '../css/dashboard.css';
 import Navbar from './Navbar';
 
 
-const GET_VEHICLES_API = '/get/vehicles'
+const GET_VEHICLES_API = '/vehicles/getAllAV/'
 const GET_VEHICLE_SENSOR_DATA_API = '/get/vehicle/sensordata';
 
 class TrackComponent extends Component {
@@ -25,17 +25,13 @@ class TrackComponent extends Component {
 
   componentDidMount() {
     let newState = {};
-    // TODO: Send request to get list of vehicles
-    // const params = { admin, userId };
-    // axios.get(GET_VEHICLES_API, params)
-    
-    Promise.resolve({ status: 200, data: ['vehicle_id_0', 'vehicle_id_1']}) // mock data
+    axios.get(GET_VEHICLES_API, {})
     .then((response) => {
-
       // Parse veheicleIds from response
-      const { status, statusText, data: vehicleIds } = response;
+      const { status, statusText, data: vehicles } = response;
       if (status !== 200) throw new Error(`Expect ${GET_VEHICLES_API} responses 200 instead of ${status}: ${statusText}`);
-      if (!Array.isArray(vehicleIds)) console.warn('[TRACK] vehicleIds is not an array');
+      if (!Array.isArray(vehicles)) console.warn('[TRACK] vehicleIds is not an array');
+      const vehicleIds = vehicles.map((v) => v.pk);
 
       // Save vehicleIds to new state
       newState = Object.assign(newState, { vehicleIds });
@@ -86,7 +82,7 @@ class TrackComponent extends Component {
           {
             vehicleIds.map((vehicleId, index) => (
               <option key={vehicleId} value={vehicleId}>
-                {`${index}. AV number ${vehicleId}`}
+                {`${index + 1}. AV number ${vehicleId}`}
               </option>))
           }
         </Form.Select>
@@ -114,7 +110,6 @@ class TrackComponent extends Component {
 
   dropDownOnChangeHandler = (event) => {
     const { target: { name, value } } = event;
-    console.log(name, value);
     this.setState({
       [name]: value,
     });
