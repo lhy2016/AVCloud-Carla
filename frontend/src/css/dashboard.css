@@ -6,7 +6,7 @@
     justify-content: flex-start;
 }
 .loggedUser-text {
-    color: orange;
+    color: rgb(74, 106, 148);
     margin: 0px 10px;
 }
 .row-flex {
