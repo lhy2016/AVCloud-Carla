@@ -24,8 +24,8 @@ function Navbar(props) {
                 <Link to="/rent" className={props.active == "rent" ? "active":""}>Rent</Link>
                 <Link to="/track" className={props.active == "track" ? "active":""}>Track</Link>
                 { isAdminLoggedIn() ?
-                    <Link to="/maintaincerecord" className={props.active == "maintaincerecord" ? "active":""}>
-                        Maintaince Record
+                    <Link to="/maintenancerecord" className={props.active == "maintenancerecord" ? "active":""}>
+                        Maintenance Record
                     </Link>
                     :
                     undefined
