@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
+from django.http.response import HttpResponseBadRequest
 from .models import *
 from rest_framework import status
 from rest_framework.response import Response
@@ -79,4 +80,54 @@ def return_vehicle(request, id):
     active_status = "False"
     rental_vehicle = Rental.objects.filter(id=id).update(is_active=active_status)
     return HttpResponse("<h1>Car has been returned</h1>")
- 
+
+keyavID = "vehicle_id"
+keyStatus = 'status'
+def getServiceHistory(request): 
+    # get the dictionary from httpRequest->QueruDict
+    # QueryDict.get(key, default=None)
+    avID = request.GET.get(keyavID, 1)
+    print("getservice")
+    avServiceHistory = MaintenanceRecord.objects.filter(vehicle_id = avID)
+    if avServiceHistory.exists():
+        return httpResponse_from_queryset(avServiceHistory)
+    else :
+        return  HttpResponseNotFound('<h1>illegal request</h1>')
+
+def addServiceRecord(request): 
+    # POST
+    avID = request.POST.get(keyavID, 1)
+    av = Vehicle.objects.get(pk=avID)
+    record_dict = request.POST.dict()
+    record_dict[keyavID] = av
+    record = MaintenanceRecord.objects.create(**record_dict) # insert
+    # retrun fullist
+    return HttpResponse(serializers.serialize('json', MaintenanceRecord.objects.filter(vehicle_id = avID)), content_type='application/json')
+
+def getAvailableAV(request): 
+    avs = Vehicle.objects.filter(status = 'Active')
+    thequeryset_json = serializers.serialize('json', avs, fields=('status'))
+    return HttpResponse(thequeryset_json, content_type='application/json')
+
+def updateAVstatus(request): 
+    avID = request.POST.get(keyavID, 1)
+    newstatus = request.POST.get(keyStatus, 'Active')
+    av_row_match = Vehicle.objects.filter(pk = avID).update(status = newstatus)
+    if av_row_match > 0 :
+        return  HttpResponse('AV status Updated')
+    else:
+        return HttpResponseBadRequest('No AV updated')
+
+def getAllAV(request): 
+    avs = Vehicle.objects.all()
+    thequeryset_json = serializers.serialize('json', avs, fields=('model','color'))
+    return HttpResponse(thequeryset_json, content_type='application/json')
+
+def carlaUpdate(request): 
+    # mongodb just pull
+
+    return
+
+def httpResponse_from_queryset (thequeryset) :
+    thequeryset_json = serializers.serialize('json', thequeryset)
+    return HttpResponse(thequeryset_json, content_type='application/json')
