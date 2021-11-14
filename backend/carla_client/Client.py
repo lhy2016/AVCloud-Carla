@@ -11,4 +11,5 @@ class Client:
         if Client.__instance == None:
             Client.__instance = carla.Client('localhost', 2000)
             Client.__instance.set_timeout(20.0)
+            Client.__instance.load_world("Town02")
         return Client.__instance

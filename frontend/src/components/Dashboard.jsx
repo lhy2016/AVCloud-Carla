@@ -1,15 +1,29 @@
-import { Row, Col, Button, Modal, Form} from "react-bootstrap";
+import { Row, Col, Button, Modal, Form, Table} from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import "../css/dashboard.css";
-import React, {useState} from "react";
+import { Link } from "react-router-dom";
+import React, {useEffect, useState} from "react";
 import Navbar from "./Navbar";
 import axios from "axios"
 import "../js/config"
 import { getCookie } from "../js/utilities";
+import { useAlert } from 'react-alert'
 
 function Dashboard(props) {
-
-    // axios.get("")
+    const alert = useAlert()  
+    const [AVs, getAVs] = useState([]);
+    function updateAVs() {
+        axios.get(window.serverPrefix + "vehicles/getAllAV/")
+        .then((response)=>{
+            getAVs(response.data)
+        })
+        .catch((err)=> {
+            console.log(err.response)
+        })
+    }    
+    useEffect(()=> {
+        updateAVs()
+    }, []);
 
     const defaultCar = {name:"", make:"0", color:"0"}
     const [show, setShow] = useState(false);
@@ -23,17 +37,40 @@ function Dashboard(props) {
     function submitCar() {
         axios.post(window.serverPrefix+"vehicles/add_vehicle", carInput)
         .then((response)=> {
-            console.log(response.data)
+            console.log(response)
+            if (response.status == 200) {
+                var car = JSON.parse(response.data)[0]
+                alert.success("Sucessfully created vehicle: " + car.fields.name)
+                updateAVs()
+            }
         })
         .catch((err)=> {
-            console.log(err.response)
+            console.log(err);
+            // alert.error(err);
         });
         updateCar(defaultCar);
         handleClose()
     }
+
+    function deleteCar(vehicle_id) {
+        console.log(vehicle_id);
+        axios.get(window.serverPrefix+"vehicles/remove/"+vehicle_id)
+        .then((response)=> {
+            if (response.status === 200) {
+                var car = JSON.parse(response.data)[0]
+                alert.success("Sucessfully deleted vehicle: " + car.fields.name)
+                updateAVs()
+            }
+        })
+        .catch((err)=> {
+            console.log(err);
+        })
+    }
+
     const isAdmin = (getCookie("loggedUser") === 'admin')
     return(
     <Container className="content-container">
+        {/* {["a","b","c"].map(element=>(<h1>{element}</h1>))} */}
         <Navbar active="dashboard"/>
         <Row style={{marginTop:"20px"}}>
             <Col md="10">
@@ -73,8 +110,40 @@ function Dashboard(props) {
                     </Button>
                     </Modal.Footer>
                 </Modal>
+                
             </Col>
+            <Table striped bordered hover style={{marginTop:"30px"}}>
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>Name</th>
+                            <th>Make</th>
+                            <th>Color</th>
+                            <th>Create Date</th>
+                            <th>Status</th>
+                            <th>Operations</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {AVs.map((element, index) => 
+                            (<tr key={element.pk}>
+                                <td>{element.pk}</td>
+                                <td>{element.fields.name}</td>
+                                <td>{element.fields.make.charAt(0).toUpperCase()+element.fields.make.slice(1)}</td>
+                                <td>{element.fields.color}</td>
+                                <td>{element.fields.created_on}</td>
+                                <td>{element.fields.status}</td>
+                                <td style={{display:"flex"}}>
+                                    <Link to={"/track/"+element.pk} className="ops-links">Track</Link>
+                                    {isAdmin ?
+                                    <Button className="ops-buttons" variant="danger" onClick={()=>{deleteCar(element.pk)}}>delete</Button> : <></>}
+                                </td>
+                            </tr>)
+                        )}
+                    </tbody>
+                </Table>
         </Row>
+        
     </Container>)
 }
 export default Dashboard;

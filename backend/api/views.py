@@ -49,6 +49,7 @@ def add_vehicle(request):
     random_point = random.choice(spawn_points)
     carla_vehicle = world.try_spawn_actor(bp, random_point)
     if carla_vehicle != None:
+        carla_vehicle.set_autopilot(True)
         vehicle = Vehicle(name=name, make=make, color=color)
         vehicle.save()
         vehicle_obj = Vehicle.objects.get(id=vehicle.id)
@@ -67,6 +68,16 @@ def add_vehicle(request):
 @api_view(['GET'])
 def remove_vehicle(request, id):
     vehicle_obj = Vehicle.objects.get(id=id)
+
+    client = Client.instance()
+    world = client.get_world()
+    
+    all_cars = world.get_actors().filter("vehicle.*")
+    car_to_delete = [car for car in all_cars if car.attributes.get("role_name") == vehicle_obj.name]
+    
+    if len(car_to_delete) == 1:
+        car = car_to_delete[0]
+        car.destroy()   
     vehicle_obj.delete()
     serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
     return Response(serialized_vehicle, status=status.HTTP_200_OK)
@@ -160,7 +171,7 @@ def updateAVstatus(request):
 
 def getAllAV(request): 
     avs = Vehicle.objects.all()
-    thequeryset_json = serializers.serialize('json', avs, fields=('model','color'))
+    thequeryset_json = serializers.serialize('json', avs)
     return HttpResponse(thequeryset_json, content_type='application/json')
 
 def carlaUpdate(request): 

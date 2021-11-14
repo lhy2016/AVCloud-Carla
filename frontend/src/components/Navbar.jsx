@@ -20,11 +20,11 @@ function Navbar(props) {
                 </div>
             </Col>
             <Col md="7" className="nav-link-container">
-                <Link to="/dashboard" className={props.active == "dashboard" ? "active":""}>Dashboard</Link>
-                <Link to="/rent" className={props.active == "rent" ? "active":""}>Rent</Link>
-                <Link to="/track" className={props.active == "track" ? "active":""}>Track</Link>
+                <Link to="/dashboard" className={props.active === "dashboard" ? "active":""}>Dashboard</Link>
+                <Link to="/rent" className={props.active === "rent" ? "active":""}>Rent</Link>
+                <Link to="/track" className={props.active === "track" ? "active":""}>Track</Link>
                 { isAdminLoggedIn() ?
-                    <Link to="/maintenancerecord" className={props.active == "maintenancerecord" ? "active":""}>
+                    <Link to="/maintenancerecord" className={props.active === "maintenancerecord" ? "active":""}>
                         Maintenance Record
                     </Link>
                     :
