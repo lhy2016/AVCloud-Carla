@@ -8,3 +8,11 @@ export function getCookie(key) {
     }
     return ret[key]
 }
+
+export function getLoggedInUser() {
+    return getCookie('loggedUser');
+}
+
+export function isAdminLoggedIn() {
+    return getLoggedInUser() === 'admin';
+}
