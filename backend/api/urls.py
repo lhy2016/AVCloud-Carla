@@ -8,8 +8,7 @@ urlpatterns = [
     #/homepage/
     path('', views.homepage, name="homepage"),
     path('add_vehicle', views.add_vehicle, name="add_vehicle"),
-    # This is how to do a GET REQUEST
-    # path('add_vehicle/<str:make>/<str:model>/<str:year>/<str:color>/<str:created_on>/<str:is_deleted>', views.add_vehicle, name="add_vehicle"),
+    
     path('remove/<int:id>', views.remove_vehicle, name="remove_vehicle"),
     path('markAvailable/<int:id>', views.mark_available, name="mark_available"),
     path('markUnavailable/<int:id>', views.mark_unavailable, name="mark_unavailable"),

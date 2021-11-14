@@ -4,9 +4,13 @@ import "../css/dashboard.css";
 import React, {useState} from "react";
 import Navbar from "./Navbar";
 import axios from "axios"
-
+import "../js/config"
+import { getCookie } from "../js/utilities";
 
 function Dashboard(props) {
+
+    // axios.get("")
+
     const defaultCar = {name:"", make:"0", color:"0"}
     const [show, setShow] = useState(false);
     const [carInput, updateCar] = useState(Object.assign(defaultCar))
@@ -27,6 +31,7 @@ function Dashboard(props) {
         updateCar(defaultCar);
         handleClose()
     }
+    const isAdmin = (getCookie("loggedUser") === 'admin')
     return(
     <Container className="content-container">
         <Navbar active="dashboard"/>
@@ -35,7 +40,9 @@ function Dashboard(props) {
                 <h4>AV status</h4>
             </Col>
             <Col>
-                <Button variant="warning" onClick={handleShow}>Add a New AV</Button>
+                {isAdmin?
+                    <Button variant="warning" onClick={handleShow}>Add a New AV</Button>:
+                    <></>}
                 <Modal show={show} onHide={handleClose}>
                     <Modal.Header closeButton>
                     <Modal.Title>Add a New AV</Modal.Title>

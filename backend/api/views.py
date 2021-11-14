@@ -9,7 +9,7 @@ from rest_framework.decorators import api_view
 from django.core import serializers
 from datetime import datetime
 import random
-from api.Client import Client
+from carla_client.Client import Client
 # Create your views here.
 
 def homepage(request):
