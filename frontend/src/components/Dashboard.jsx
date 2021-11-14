@@ -1,34 +1,38 @@
+import { Row, Col, Button, Modal} from "react-bootstrap";
 import Container from "react-bootstrap/Container";
-import {Badge, Row, Col, Button} from "react-bootstrap";
 import "../css/dashboard.css";
-import { useNavigate } from "react-router";
-function Dashboard() {
-    const navigate = useNavigate();
-    function getCookie(key) {
-        var ret = {}
-        var cookie = document.cookie.split(";");
-        for (var pair of cookie) {
-            pair = pair.trim()
-            var arr = pair.split("=")
-            ret[arr[0]] = arr[1]
-        }
-        return ret[key]
-    }
-    function logout() {
-        document.cookie = "loggedUser=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        navigate("/");
-    }
-    const loggedUser = getCookie("loggedUser")
+import React, {useState} from "react";
+import Navbar from "./Navbar";
+function Dashboard(props) {
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
     return(
-    <Container id="dashboard-container">
-        <Row className='color-row'>
-            <Col md="10" style={{display:"flex"}}>
-                <div className="row-flex ">
-                    Hello, <span class='loggedUser-text'>{loggedUser}</span>
-                    <Badge bg="info">{loggedUser === "admin" ? "Administrator" : "Public User"}</Badge>
-                </div>
+    <Container className="content-container">
+        <Navbar active="dashboard"/>
+        <Row style={{marginTop:"20px"}}>
+            <Col md="10">
+                <h4>AV status</h4>
             </Col>
-            <Col><Button variant="secondary" onClick={logout}>Log out</Button></Col>
+            <Col>
+                <Button variant="warning" onClick={handleShow}>Add a New AV</Button>
+                <Modal show={show} onHide={handleClose}>
+                    <Modal.Header closeButton>
+                    <Modal.Title>Add a New AV</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        
+                    </Modal.Body>
+                    <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Cancel
+                    </Button>
+                    <Button variant="primary" onClick={handleClose}>
+                        Add
+                    </Button>
+                    </Modal.Footer>
+                </Modal>
+            </Col>
         </Row>
     </Container>)
 }

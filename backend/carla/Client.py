@@ -9,6 +9,6 @@ class Client:
     @staticmethod
     def instance():
         if Client.__instance == None:
-            Client.__instance = carla.Client('localhost', 4444)
+            Client.__instance = carla.Client('localhost', 2000)
             Client.__instance.set_timeout(20.0)
         return Client.__instance
