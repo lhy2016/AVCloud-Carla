@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseNotFound
 from django.http.response import HttpResponseBadRequest
+from django.utils.timezone import activate
 from .models import *
 from rest_framework import status
 from rest_framework.response import Response
@@ -12,9 +13,9 @@ from datetime import datetime
 
 def homepage(request):
     print("inside homepage")
-    # return HttpResponse("<h1>This is vehicle rental homepage</h1>")
+    return HttpResponse("<h1>This is vehicle rental homepage</h1>")
     # return render(request, "homepage.html")
-    return render(request, "rent_vehicle.html")
+    # return render(request, "rent_vehicle.html")
 
 @api_view(['POST'])
 def add_vehicle(request):
@@ -23,10 +24,10 @@ def add_vehicle(request):
     year = request.POST.get("Year")
     color = request.POST.get("Color")
     created_on = request.POST.get("Date")
-    is_available = request.POST.get("AvailableFlag")
+    # is_available = request.POST.get("AvailableFlag")
 
     created_on = datetime.strptime(created_on, '%Y-%m-%d').isoformat()
-    vehicle = Vehicle(make=make, model=model, year=year, color=color, created_on=created_on, is_available=is_available)
+    vehicle = Vehicle(make=make, model=model, year=year, color=color, created_on=created_on)
     vehicle.save()
     vehicle_obj = Vehicle.objects.get(id=vehicle.id)
     serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
@@ -80,6 +81,22 @@ def return_vehicle(request, id):
     active_status = "False"
     rental_vehicle = Rental.objects.filter(id=id).update(is_active=active_status)
     return HttpResponse("<h1>Car has been returned</h1>")
+
+"""
+select * from api_vehicle A INNER JOIN api_rental B ON A.id = B.vehicle_id_id 
+Where A.status = "connected" and B.active_status = "False"
+"""
+@api_view(['GET'])
+def getAVStatus(request):
+    # Select_related is how to use a LEFT JOIN
+    # print(f'Query test is: {Rental.objects.all().select_related("vehicle_id").query }')
+    # print(f'Query test is: {Rental.objects.filter(vehicle_id__status="connected").filter(active_status="f").query }')
+    list_of_vehilces=Rental.objects.filter(vehicle_id__status="connected").filter(active_status="f") 
+    # print(f'Query test is: {Rental.objects.filter(vehicle_id__status="connected").query }')
+
+    serialized_vehicle = serializers.serialize('json', list_of_vehilces)
+    return Response(serialized_vehicle, status=status.HTTP_200_OK)
+
 
 keyavID = "vehicle_id"
 keyStatus = 'status'

@@ -20,6 +20,7 @@ urlpatterns = [
     path('getAvailableAV/', views.getAvailableAV, name = 'get-available-av'), 
     path('updateAVstatus/', views.updateAVstatus, name = 'update-av-status'),
     path('getAllAV/', views.getAllAV, name = 'get-all-av'),
+    path('getAVStatus/', views.getAVStatus, name='get-av-status'),
     path('carlaUpdate/', views.carlaUpdate, name = 'update-carla-data'),
 
 ]
