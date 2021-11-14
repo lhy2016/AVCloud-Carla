@@ -83,7 +83,7 @@ DATABASES = {
         'NAME': 'avcloud',
         'USER': 'postgres', # replace with your db user
         'PASSWORD': 'lhy_2016', # replace with your password
-        'HOST': '54.151.114.117', # will replace it with actual db server address later
+        'HOST': '3.101.103.200', # will replace it with actual db server address later
         'PORT': 5432,
     }
 }
