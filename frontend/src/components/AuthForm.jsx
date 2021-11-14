@@ -5,11 +5,13 @@ import React, { useState } from 'react'
 import "../js/config"
 
 import { useAlert } from 'react-alert'
+import { useNavigate } from 'react-router-dom';
 
 
 function AuthForm(props) {
-    const [formInput, updateInput] = useState({ username: "", password: ""})
+    const [formInput, updateInput] = useState({ username: "", password: ""});
     const alert = useAlert()    
+    const navigate = useNavigate();
     
     function handleFormSubmit(action) {
         axios
@@ -18,8 +20,17 @@ function AuthForm(props) {
             if (response.status === 201) {
                 alert.success("User created, please Login")
                 props.signupCallBack("login");
-                updateInput(previous=>{})
+                
+            } else if (response.status === 200) {
+                alert.success("Welcome back, " + response.data["user"]);
+                var date = new Date();
+                date.setDate(date.getDate() + 7);
+                var dateString = date.toUTCString()
+                document.cookie = "loggedUser="+response.data["user"]+"; expires="+dateString+"; path=/";
+                
+                navigate('/dashboard')
             }
+            updateInput({username:"", password:""})
           })
           .catch((err) => {
               console.log(err.response.data)
@@ -27,22 +38,19 @@ function AuthForm(props) {
           });
     }
 
-    function updateFormInput(name, value) {
-        updateInput( (previous) => {
-            previous[name] = value
-            return previous
-        })
+    const updateFormInput = (name, value) => {
+        updateInput({ ...formInput, [name]: value});
     }
 
     return (
         <Form className='landing-form'>
-            <Form.Group className="mb-3" controlId="username">
+            <Form.Group className="mb-3" controlId={props.action + "username"}>
                 <Form.Label>Username</Form.Label>
-                <Form.Control type="text" placeholder="Enter Username" onChange={(e) => {updateFormInput("username", e.target.value)} } />
+                <Form.Control type="text" placeholder="Enter Username" onChange={(e) => {updateFormInput("username", e.target.value)}} value={formInput.username}/>
             </Form.Group>
-            <Form.Group className="mb-3" controlId="password">
+            <Form.Group className="mb-3" controlId={props.action + "password"}>
                 <Form.Label>Password</Form.Label>
-                <Form.Control type="password" placeholder="Enter Password" onChange={(e) => {updateFormInput("password", e.target.value)} }/>
+                <Form.Control type="password" placeholder="Enter Password" onChange={(e) => {updateFormInput("password", e.target.value)}} value={formInput.password}/>
             </Form.Group>
             {props.action === "login" ? 
                 <Form.Group className="mb-3" controlId="formBasicCheckbox">

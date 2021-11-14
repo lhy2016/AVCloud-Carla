@@ -1,6 +1,8 @@
 import Landing from "./Landing"
+import Dashboard from "./Dashboard";
 import { positions, Provider } from "react-alert";
 import AlertTemplate from "react-alert-template-basic";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "../css/main.css";
 
 function App() {
@@ -10,13 +12,19 @@ function App() {
     containerStyle: {
     }
   };
+
+
   return (
-    <Provider template={AlertTemplate} {...alertOptions}>
-      <div className="App">
-        <Landing>
-        </Landing>
-      </div>
-    </Provider>
+    <div id="site-container">
+    <BrowserRouter>
+      <Provider template={AlertTemplate} {...alertOptions}>
+        <Routes>
+          <Route exact path='/' element={<Landing />} />
+          <Route exact path='/dashboard' element={<Dashboard/>} />
+        </Routes>
+      </Provider>
+    </BrowserRouter>
+    </div>
   );
 }
 
