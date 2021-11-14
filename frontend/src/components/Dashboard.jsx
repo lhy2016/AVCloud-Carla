@@ -17,7 +17,7 @@ function Dashboard(props) {
         updateCar({ ...carInput, [name]: value});
     }
     function submitCar() {
-        axios.post(window.serverPrefix+"vehicles/add_vehicle")
+        axios.post(window.serverPrefix+"vehicles/add_vehicle", carInput)
         .then((response)=> {
             console.log(response.data)
         })
@@ -45,9 +45,9 @@ function Dashboard(props) {
                         </Form.Control>
                         <Form.Select aria-label="make" style={{marginTop: "8px"}} value={carInput["make"]} onChange={(e)=>{update("make", e.target.value)}}>
                             <option value="0">Select Make</option>
-                            <option value="toyota">Toyota</option>
+                            <option value="mini">Mini Cooper</option>
                             <option value="tesla">Tesla</option>
-                            <option value="bmw">BMW</option>
+                            <option value="audi">Audi</option>
                         </Form.Select>
                         <Form.Select aria-label="color" style={{marginTop: "8px"}} value={carInput["color"]} onChange={(e)=>{update("color", e.target.value)}}>
                             <option value="0">Select Color</option>

@@ -8,7 +8,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.core import serializers
 from datetime import datetime
-
+import random
+from api.Client import Client
 # Create your views here.
 
 def homepage(request):
@@ -19,20 +20,42 @@ def homepage(request):
 
 @api_view(['POST'])
 def add_vehicle(request):
-    name = request.POST.get("name")
-    make = request.POST.get("make")
-    color = request.POST.get("color")
-    print("******************************************PRINT PRINT PRINT")
-    print([name, make, color])
+    name = request.data["name"]
+    make = request.data["make"]
+    color = request.data["color"]
     
-    # is_available = request.POST.get("AvailableFlag")
+    client = Client.instance()
+    world = client.get_world()
+    bpl = world.get_blueprint_library()
 
-    vehicle = Vehicle(name=name, make=make, color=color)
-    vehicle.save()
-    vehicle_obj = Vehicle.objects.get(id=vehicle.id)
-    serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
-    print(f"Serialized is: {serialized_vehicle}")
-    return Response(serialized_vehicle, status=status.HTTP_200_OK)
+    car_blueprints = {
+        "mini": bpl.find("vehicle.mini.cooper_s"),
+        "tesla": bpl.find("vehicle.tesla.model3"),
+        "audi": bpl.find("vehicle.audi.tt")
+    }
+    colors = {
+        "yellow": '217,203,82',
+        "red": '255,0,0',
+        "blue": '0,0,255',
+        "silver": '219,219,219'
+    }
+    bp = car_blueprints[make]
+    car_color = colors[color]
+    bp.set_attribute("role_name", name)
+    bp.set_attribute("color", car_color)
+
+    map = world.get_map()
+    spawn_points = map.get_spawn_points()
+    random_point = random.choice(spawn_points)
+    carla_vehicle = world.try_spawn_actor(bp, random_point)
+    if carla_vehicle != None:
+        vehicle = Vehicle(name=name, make=make, color=color)
+        vehicle.save()
+        vehicle_obj = Vehicle.objects.get(id=vehicle.id)
+        serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
+        print(f"Serialized is: {serialized_vehicle}")
+        return Response(serialized_vehicle, status=status.HTTP_200_OK)
+    return Response({"error":"Failed to spawn "+ name + " on Carla map, please try again later"}, status=status.HTTP_400_BAD_REQUEST)
 """"
     This is how you handle a GET request
 """
