@@ -34,6 +34,8 @@ def login(request):
         
         if password == actual_password:
             ret["user"] = username
+            user_id = user.id
+            ret["id"] = user_id
             return Response(ret, status=status.HTTP_200_OK)
     return Response({"error": "Incorrect username or password"}, status=status.HTTP_400_BAD_REQUEST)
 
