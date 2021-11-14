@@ -145,7 +145,7 @@ class MaintenanceRecordComponent extends Component {
           />
         </Form.Group>
         <Form.Group className="mx-3 my-3">
-          <Button variant="secondary" onClick={this.formOnSubmitHandler}>
+          <Button variant="primary" onClick={this.formOnSubmitHandler}>
             Add new record
           </Button>
         </Form.Group>

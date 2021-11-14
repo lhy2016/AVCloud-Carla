@@ -12,6 +12,8 @@ import Navbar from './Navbar';
 const GET_VEHICLES_API = '/vehicles/getAllAV/'
 const GET_VEHICLE_SENSOR_DATA_API = '/get/vehicle/sensordata';
 
+const REFRESH_TIME_MS = 5000;
+
 class TrackComponent extends Component {
   constructor(props) {
     super(props);
@@ -60,12 +62,33 @@ class TrackComponent extends Component {
       
       // Save sensorData to new state
       newState = Object.assign(newState, { sensorDataOfSelectedVehicle: sensorData });
-
-      // Update state to the new state
-      this.setState(newState);
     })
     .catch((err) => {
       console.error('[TRACK] Failed to get list of vehicles in componentDidMount', err);
+    })
+    .finally(() => {
+      const refreshTimer = setInterval(() => this.refreshHandler(), REFRESH_TIME_MS);
+      newState = Object.assign(newState, { refreshTimer });
+      // Update state to the new state
+      this.setState(newState);
+    });
+    ;
+  }
+
+  componentWillUnmount() {
+    const { refreshTimer } = this.state;
+    if (refreshTimer) clearInterval(refreshTimer);
+  }
+
+  refreshHandler = () => {
+    // Mock drop down on change event to reload data from server
+    const { selectedVehicleId } = this.state;
+    console.log('refreshing ...');
+    this.dropDownOnChangeHandler({
+      target: {
+        name: 'selectedVehicleId',
+        value: selectedVehicleId
+      },
     });
   }
 
