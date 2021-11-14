@@ -2,18 +2,10 @@ import Container from "react-bootstrap/Container";
 import {Badge, Row, Col, Button} from "react-bootstrap";
 import "../css/dashboard.css";
 import { useNavigate } from "react-router";
+import {getCookie} from "../js/utilities";
 function Dashboard() {
     const navigate = useNavigate();
-    function getCookie(key) {
-        var ret = {}
-        var cookie = document.cookie.split(";");
-        for (var pair of cookie) {
-            pair = pair.trim()
-            var arr = pair.split("=")
-            ret[arr[0]] = arr[1]
-        }
-        return ret[key]
-    }
+    
     function logout() {
         document.cookie = "loggedUser=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         navigate("/");
