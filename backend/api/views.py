@@ -157,7 +157,7 @@ def addServiceRecord(request):
 
 def getAvailableAV(request): 
     avs = Vehicle.objects.filter(status = 'Active')
-    thequeryset_json = serializers.serialize('json', avs, fields=('status'))
+    thequeryset_json = serializers.serialize('json', avs, fields=('make', 'color', 'name'))
     return HttpResponse(thequeryset_json, content_type='application/json')
 
 def updateAVstatus(request): 
