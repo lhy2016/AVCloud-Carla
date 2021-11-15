@@ -1,0 +1,28 @@
+<form action="/vehicles/add_vehicle" method="post">
+    {% csrf_token %}
+    <label for="Make">Make: </label>
+    <input id="Make" type="text" name="Make" value="{{ Make }}">
+    <br>
+
+    <label for="Model">Model: </label>
+    <input id="Model" type="text" name="Model" value="{{ Model }}">
+
+    <br>
+    <label for="Year">Year: </label>
+    <input id="Year" type="text" name="Year" value="{{ Year }}">
+    <br>
+
+    <label for="Color">Color: </label>
+    <input id="Color" type="text" name="Color" value="{{ Color }}">
+    <br>
+
+    <label for="Date">Date: </label>
+    <input id="Date" type="text" name="Date" value="{{ Date }}">
+    <br>
+
+    <label for="AvailableFlag">Available Flag: </label>
+    <input id="AvailableFlag" type="text" name="AvailableFlag" value="{{ AvailableFlag }}">
+    <br>
+
+    <input type="submit" value="OK">
+</form>

@@ -13,8 +13,8 @@ from datetime import datetime
 
 def homepage(request):
     print("inside homepage")
-    return HttpResponse("<h1>This is vehicle rental homepage</h1>")
-    # return render(request, "homepage.html")
+    # return HttpResponse("<h1>This is vehicle rental homepage</h1>")
+    return render(request, "homepage.html")
     # return render(request, "rent_vehicle.html")
 
 @api_view(['POST'])
@@ -51,14 +51,16 @@ def remove_vehicle(request, id):
 @api_view(['GET'])
 def mark_available(request, id):
     availability = "True"
-    vehicle_obj = Vehicle.objects.filter(id=id).update(is_available=availability)
+    Vehicle.objects.filter(id=id).update(is_available=availability)
+    vehicle_obj = Vehicle.objects.get(id=id)
     serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
     return Response(serialized_vehicle, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 def mark_unavailable(request, id):
     availability = "False"
-    vehicle_obj = Vehicle.objects.filter(id=id).update(is_available=availability)
+    Vehicle.objects.filter(id=id).update(is_available=availability)
+    vehicle_obj = Vehicle.objects.get(id=id)
     serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
     return Response(serialized_vehicle, status=status.HTTP_200_OK)
 
@@ -90,8 +92,12 @@ Where A.status = "connected" and B.active_status = "False"
 def getAVStatus(request):
     # Select_related is how to use a LEFT JOIN
     # print(f'Query test is: {Rental.objects.all().select_related("vehicle_id").query }')
+    print(f'Query test is: {Rental.objects.filter(vehicle_id__status="connected").query }')
+
     # print(f'Query test is: {Rental.objects.filter(vehicle_id__status="connected").filter(active_status="f").query }')
-    list_of_vehilces=Rental.objects.filter(vehicle_id__status="connected").filter(active_status="f") 
+    # list_of_vehilces=Rental.objects.filter(vehicle_id__status="connected").filter(active_status="f") 
+    list_of_vehilces=Rental.objects.filter(vehicle_id__status="Active") 
+
     # print(f'Query test is: {Rental.objects.filter(vehicle_id__status="connected").query }')
 
     serialized_vehicle = serializers.serialize('json', list_of_vehilces)

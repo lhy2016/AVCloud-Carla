@@ -1,0 +1,32 @@
+<form action="/vehicles/rent_vehicle" method="post">
+    {% csrf_token %}
+    <label for="time_started">time_started: </label>
+    <input id="time_started" type="text" time_started="Make" value="{{ time_started }}">
+    <br>
+
+    <label for="time_finished">time_finished: </label>
+    <input id="time_finished" type="text" name="time_finished" value="{{ time_finished }}">
+
+    <br>
+    <label for="distance">distance: </label>
+    <input id="distance" type="text" name="distance" value="{{ distance }}">
+    <br>
+
+    <label for="duration">duration: </label>
+    <input id="duration" type="text" name="duration" value="{{ duration }}">
+    <br>
+
+    <label for="user_id_id">user_id_id: </label>
+    <input id="user_id_id" type="text" name="user_id_id" value="{{ user_id_id }}">
+    <br>
+
+    <label for="vehicle_id_id">Available Flag: </label>
+    <input id="vehicle_id_id" type="text" name="vehicle_id_id" value="{{ vehicle_id_id }}">
+    <br>
+
+    <label for="active_status">active_status: </label>
+    <input id="active_status" type="text" name="active_status" value="{{ active_status }}">
+    <br>
+
+    <input type="submit" value="OK">
+</form>
