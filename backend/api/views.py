@@ -24,7 +24,6 @@ def add_vehicle(request):
     year = request.POST.get("Year")
     color = request.POST.get("Color")
     created_on = request.POST.get("Date")
-    # is_available = request.POST.get("AvailableFlag")
 
     created_on = datetime.strptime(created_on, '%Y-%m-%d').isoformat()
     vehicle = Vehicle(make=make, model=model, year=year, color=color, created_on=created_on)
@@ -41,23 +40,31 @@ def add_vehicle(request):
 #     vehicle.save()
 #     return HttpResponse("<h1>Added Vehicle</h1>")
 
-@api_view(['GET'])
+@api_view(['DELETE'])
 def remove_vehicle(request, id):
+    # print("HELLO")
+    # print(request.method)
+    # print(request)
+    # print("TEST")
+    # id = request.DELETE.get("id")
     vehicle_obj = Vehicle.objects.get(id=id)
     vehicle_obj.delete()
     serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
     return Response(serialized_vehicle, status=status.HTTP_200_OK)
 
-@api_view(['GET'])
+@api_view(['PUT'])
 def mark_available(request, id):
+    print(f"REQUEST METHOD IS: {request.method}")
     availability = "True"
     Vehicle.objects.filter(id=id).update(is_available=availability)
     vehicle_obj = Vehicle.objects.get(id=id)
     serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
     return Response(serialized_vehicle, status=status.HTTP_200_OK)
 
-@api_view(['GET'])
+@api_view(['PUT'])
 def mark_unavailable(request, id):
+    print(f"REQUEST METHOD IS: {request.method}")
+
     availability = "False"
     Vehicle.objects.filter(id=id).update(is_available=availability)
     vehicle_obj = Vehicle.objects.get(id=id)
