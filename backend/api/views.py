@@ -65,7 +65,7 @@ def add_vehicle(request):
 #     vehicle.save()
 #     return HttpResponse("<h1>Added Vehicle</h1>")
 
-@api_view(['GET'])
+@api_view(['DELETE'])
 def remove_vehicle(request, id):
     vehicle_obj = Vehicle.objects.get(id=id)
 
@@ -82,17 +82,19 @@ def remove_vehicle(request, id):
     serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
     return Response(serialized_vehicle, status=status.HTTP_200_OK)
 
-@api_view(['GET'])
+@api_view(['PUT'])
 def mark_available(request, id):
     availability = "True"
-    vehicle_obj = Vehicle.objects.filter(id=id).update(is_available=availability)
+    Vehicle.objects.filter(id=id).update(is_available=availability)
+    vehicle_obj = Vehicle.objects.get(id=id)
     serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
     return Response(serialized_vehicle, status=status.HTTP_200_OK)
 
-@api_view(['GET'])
+@api_view(['PUT'])
 def mark_unavailable(request, id):
     availability = "False"
-    vehicle_obj = Vehicle.objects.filter(id=id).update(is_available=availability)
+    Vehicle.objects.filter(id=id).update(is_available=availability)
+    vehicle_obj = Vehicle.objects.get(id=id)
     serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
     return Response(serialized_vehicle, status=status.HTTP_200_OK)
 
