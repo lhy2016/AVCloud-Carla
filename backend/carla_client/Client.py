@@ -1,4 +1,4 @@
-# import carla
+import carla
 
 class Client:
     __instance = None

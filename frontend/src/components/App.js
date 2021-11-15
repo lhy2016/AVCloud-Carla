@@ -1,6 +1,7 @@
 import Landing from "./Landing"
 import Dashboard from "./Dashboard";
 import Rent from "./Rent";
+import RentForm from './RentForm';
 import Track from "./Track";
 import MaintenanceRecord from './MaintenanceRecord';
 import { positions, Provider } from "react-alert";
@@ -26,6 +27,7 @@ function App() {
           <Route exact path='/' element={<Landing />} />
           <Route exact path='/dashboard' element={<Dashboard/>} />
           <Route exact path='/rent' element={<Rent/>} />
+          <Route exact path='/rent/:vehicleId' element={<RentForm />} />
           <Route exact path='/track' element={<Track />} />
           <Route exact path='/maintenancerecord' element={<MaintenanceRecord />} />
         </Routes>
