@@ -12,7 +12,7 @@ import Navbar from './Navbar';
 const GET_VEHICLES_API = '/vehicles/getAllAV/'
 const GET_VEHICLE_SENSOR_DATA_API = '/get/vehicle/sensordata';
 
-const REFRESH_TIME_MS = 5000;
+const REFRESH_TIME_MS = 1000;
 
 class TrackComponent extends Component {
   constructor(props) {
@@ -46,13 +46,7 @@ class TrackComponent extends Component {
       const selectedVehicleId = vehicleIds[0];
       newState = Object.assign(newState, { selectedVehicleId });
 
-      // TODO: Send request to get vehicle sensor data
-      // const params = { vehickeId, userId };
-      // return axios.get(GET_VEHICLE_SENSOR_DATA_API, params);
-      return Promise.resolve({ 
-        status: 200,
-        data: { vehicleId: selectedVehicleId, seepd: '66 miles/hr', location: 'N:123 W:567'},
-      }); // mock data
+      return getSensorDataFromServerPromise(selectedVehicleId)
     })
     .then((response) => {
 
@@ -136,13 +130,8 @@ class TrackComponent extends Component {
     this.setState({
       [name]: value,
     });
-    // TODO: Send request to get vehicle sensor data
-    // const params = { vehicleId: value, userId };
-    // return axios.get('/get/vehicle/sensor/data', params);
-    Promise.resolve({ 
-      status: 200,
-      data: { vehicleId: value, seepd: '66 miles/hr', location: 'N:456 W:768', debug: value},
-    })
+
+    getSensorDataFromServerPromise(value)
     .then((response) => {
 
       // Parse sensorData from response
@@ -163,6 +152,18 @@ class TrackComponent extends Component {
       </Container>
     );
   }
+}
+
+function getSensorDataFromServerPromise(vehicleId) {
+  const location = JSON.stringify({
+    N: (456 + Math.random() / 1000).toFixed(7),
+    W: (789 + Math.random() / 1000).toFixed(7),
+  });
+  const speed = `${(66 + Math.random()).toFixed(1)} miles/hr`
+  return Promise.resolve({
+    status: 200,
+    data: { vehicleId, speed, location },
+  });
 }
 
 export default TrackComponent;
