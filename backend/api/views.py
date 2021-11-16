@@ -171,6 +171,7 @@ def updateAVstatus(request):
 
 def getAllAV(request): 
     avs = Vehicle.objects.all()
+    print(avs)
     thequeryset_json = serializers.serialize('json', avs)
     return HttpResponse(thequeryset_json, content_type='application/json')
 

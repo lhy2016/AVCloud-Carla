@@ -10,12 +10,19 @@ import { getCookie } from "../js/utilities";
 import { useAlert } from 'react-alert'
 
 function Dashboard(props) {
+    const isAdmin = (getCookie("loggedUser") === 'admin')
     const alert = useAlert()  
     const [AVs, getAVs] = useState([]);
     function updateAVs() {
-        axios.get(window.serverPrefix + "vehicles/getAllAV/")
+        var queryAPI = (isAdmin ? "vehicles/getAllAV/" : "vehicles/getAllAV/")
+        axios.get(window.serverPrefix + queryAPI)
         .then((response)=>{
-            getAVs(response.data)
+            var vehicleObjs = response.data;
+            vehicleObjs.map((element)=> {
+                element["selected"] = false;
+                return element;
+            })
+            getAVs(vehicleObjs)
         })
         .catch((err)=> {
             console.log(err.response)
@@ -51,7 +58,12 @@ function Dashboard(props) {
         updateCar(defaultCar);
         handleClose()
     }
-
+    function deleteCars() {
+        for (var av of AVs.filter((av)=>av.selected)) {
+            deleteCar(av.pk);
+        }
+        
+    }
     function deleteCar(vehicle_id) {
         console.log(vehicle_id);
         axios.get(window.serverPrefix+"vehicles/remove/"+vehicle_id)
@@ -67,14 +79,19 @@ function Dashboard(props) {
         })
     }
 
-    const isAdmin = (getCookie("loggedUser") === 'admin')
+    function updateChecked(index) {
+        let newArr = [...AVs];
+        newArr[index].selected = !newArr[index].selected
+        getAVs(newArr) 
+    }
+
     return(
     <Container className="content-container">
         {/* {["a","b","c"].map(element=>(<h1>{element}</h1>))} */}
         <Navbar active="dashboard"/>
         <Row style={{marginTop:"20px"}}>
             <Col md="10">
-                <h4>AV status</h4>
+                <h4>{isAdmin? "AV status":"Your Rental Vehicle"}</h4>
             </Col>
             <Col>
                 {isAdmin?
@@ -112,32 +129,39 @@ function Dashboard(props) {
                 </Modal>
                 
             </Col>
+         
+            {isAdmin ?
+            <Col md="5"style={{marginTop: "20px"}} style={{height:"30px",display:"block"}}>
+                <Button varient="info" style={{marginRight: "7px"}}> Update</Button>
+                <Button variant="danger" onClick={deleteCars}>Delete</Button>
+            </Col>:
+            <></>
+            }
+          
             <Table striped bordered hover style={{marginTop:"30px"}}>
                     <thead>
                         <tr>
+                            <th> </th>
                             <th>id</th>
                             <th>Name</th>
                             <th>Make</th>
                             <th>Color</th>
                             <th>Create Date</th>
                             <th>Status</th>
-                            <th>Operations</th>
                         </tr>
                     </thead>
                     <tbody>
                         {AVs.map((element, index) => 
-                            (<tr key={element.pk}>
+                            (<tr key={element.pk} onClick={()=>{updateChecked(index)}}>
+                                <td >
+                                    <Form.Check checked={element.selected} onClick={(e)=>{e.stopPropagation()}} onChange={()=> {updateChecked(index)}} />
+                                </td>
                                 <td>{element.pk}</td>
                                 <td>{element.fields.name}</td>
                                 <td>{element.fields.make.charAt(0).toUpperCase()+element.fields.make.slice(1)}</td>
                                 <td>{element.fields.color}</td>
                                 <td>{element.fields.created_on}</td>
                                 <td>{element.fields.status}</td>
-                                <td style={{display:"flex"}}>
-                                    <Link to={"/track/"+element.pk} className="ops-links">Track</Link>
-                                    {isAdmin ?
-                                    <Button className="ops-buttons" variant="danger" onClick={()=>{deleteCar(element.pk)}}>delete</Button> : <></>}
-                                </td>
                             </tr>)
                         )}
                     </tbody>
