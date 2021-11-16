@@ -66,7 +66,7 @@ function Dashboard(props) {
     }
     function deleteCar(vehicle_id) {
         console.log(vehicle_id);
-        axios.get(window.serverPrefix+"vehicles/remove/"+vehicle_id)
+        axios.delete(window.serverPrefix+"vehicles/remove/"+vehicle_id)
         .then((response)=> {
             if (response.status === 200) {
                 var car = JSON.parse(response.data)[0]
@@ -131,14 +131,16 @@ function Dashboard(props) {
             </Col>
          
             {isAdmin ?
-            <Col md="5"style={{marginTop: "20px"}} style={{height:"30px",display:"block"}}>
+            <Col md="5"style={{marginTop: "20px"}} style={{height:"43px"} }>
+                <div style={{display:AVs.filter(av=>av.selected).length > 0 ? "block": "none"}}>
                 <Button varient="info" style={{marginRight: "7px"}}> Update</Button>
                 <Button variant="danger" onClick={deleteCars}>Delete</Button>
+                </div>
             </Col>:
             <></>
             }
           
-            <Table striped bordered hover style={{marginTop:"30px"}}>
+            <Table striped bordered hover style={{marginTop:"20px"}}>
                     <thead>
                         <tr>
                             <th> </th>
