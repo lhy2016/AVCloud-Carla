@@ -98,6 +98,7 @@ def mark_unavailable(request, id):
     serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
     return Response(serialized_vehicle, status=status.HTTP_200_OK)
 
+@api_view(['POST'])
 def rent_vehicle(request):
     time_started = request.POST.get('time_started')
     time_finished = request.POST.get('time_finished')
@@ -110,13 +111,18 @@ def rent_vehicle(request):
     rental_vehicle = Rental(time_started=time_started, time_finished=time_finished, distance=distance, duration=duration,
     user_id_id=user_id_id, vehicle_id_id=vehicle_id_id, active_status=active_status)
     rental_vehicle.save()
-    return HttpResponse("<h1>Vehicle is rented</h1>")
+    vehicle_obj = Rental.objects.get(id=rental_vehicle.id)
+    serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
 
+    return Response(serialized_vehicle, status=status.HTTP_200_OK)
 
+@api_view(['PUT'])
 def return_vehicle(request, id):
     active_status = "False"
-    rental_vehicle = Rental.objects.filter(id=id).update(is_active=active_status)
-    return HttpResponse("<h1>Car has been returned</h1>")
+    Rental.objects.filter(id=id).update(is_active=active_status)
+    vehicle_obj = Rental.objects.get(id=id)
+    serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
+    return Response(serialized_vehicle, status=status.HTTP_200_OK)
 
 """
 select * from api_vehicle A INNER JOIN api_rental B ON A.id = B.vehicle_id_id 
