@@ -192,7 +192,6 @@ function Dashboard(props) {
                                 <td>{element.time_finished}</td>
                                 <td>{element.distance}</td>
                                 <td>{element.duration}</td>
-                                <td>{element.active_status}</td>
                                 <td>{element.vehicle_id_created_on}</td>
 
                             </tr>)
