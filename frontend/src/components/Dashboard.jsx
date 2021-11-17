@@ -192,6 +192,8 @@ function Dashboard(props) {
                                 <td>{element.distance}</td>
                                 <td>{element.duration}</td>
                                 <td>{element.active_status}</td>
+                                <td>{element.created_on}</td>
+
                             </tr>)
                         )}
 
