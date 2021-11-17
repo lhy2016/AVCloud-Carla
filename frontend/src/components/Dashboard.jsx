@@ -11,10 +11,31 @@ import { useAlert } from 'react-alert'
 
 function Dashboard(props) {
     const isAdmin = (getCookie("loggedUser") === 'admin')
+    const UserID = getCookie("userId")
     const alert = useAlert()  
     const [AVs, getAVs] = useState([]);
     const [initStates, setInitStates] = useState([]);
-    const [changedAVs, addChangedAVs] = useState([]);
+    const [VehicleList, userRentalList] = useState([]);
+
+    const getUserRentalList = () => {
+        axios.get(window.serverPrefix + "vehicles/getUserRentalHistory/" + UserID)
+        .then((response)=>{
+            console.log("Inside response function")
+            // console.log(response.data)
+            var vehicleList = response.data;
+            console.log(typeof(vehicleList))
+            vehicleList.map((element)=> {
+                element["selected"] = false;
+                return element;
+            })
+            console.log(vehicleList)
+            userRentalList(vehicleList)
+        })
+        .catch((error)=> {
+            console.log(error.response)
+        })
+    };
+
     function updateAVs() {
         var queryAPI = (isAdmin ? "vehicles/getAllAV/" : "vehicles/getAllAV/")
         axios.get(window.serverPrefix + queryAPI)
@@ -30,10 +51,13 @@ function Dashboard(props) {
         .catch((err)=> {
             console.log(err.response)
         })
-    }    
+    }
+
     useEffect(()=> {
+        getUserRentalList();
         updateAVs();
     }, []);
+
     const defaultCar = {name:"", make:"0", color:"0"}
     const [show, setShow] = useState(false);
     const [carInput, updateCar] = useState(Object.assign(defaultCar))
@@ -201,6 +225,38 @@ function Dashboard(props) {
                         )}
                     </tbody>
                 </Table>
+        </Row>
+        <Row>
+            <h4>Your Rental History</h4>
+            <Table striped bordered hover style={{marginTop:"20px"}}>
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>Name</th>
+                            <th>Make</th>
+                            <th>Time Started</th>
+                            <th>Time Finished</th>
+                            <th>Distance</th>
+                            <th>Duration</th>
+                            <th>Created On</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        { VehicleList.map((element, index) => 
+                            (<tr key={element.id}>
+                                <td>{element.id}</td>
+                                <td>{element.vehicle_id_name}</td>
+                                <td>{element.vehicle_id_make}</td>
+                                <td>{element.time_started}</td>
+                                <td>{element.time_finished}</td>
+                                <td>{element.distance}</td>
+                                <td>{element.duration}</td>
+                                <td>{element.vehicle_id_created_on}</td>
+                            </tr>)
+                        )}
+                    </tbody>
+            </Table>
         </Row>
     </Container>)
 }
