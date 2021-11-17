@@ -52,7 +52,7 @@ function Dashboard(props) {
         .catch((err)=> {
             console.log(err.response)
         })
-    }
+    }    
     useEffect(()=> {
         getUserRentalList();
         updateAVs();
