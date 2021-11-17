@@ -63,8 +63,8 @@ class RentComponent extends Component {
             </thead>
             <tbody>
               {
-                availableVehicles.map((av) => (
-                  <tr key={av.pk}>
+                availableVehicles.map((av, index) => (
+                  <tr key={index}>
                     <td>{av.vehicleId}</td>
                     <td>{av.name}</td>
                     <td>{av.make}</td>

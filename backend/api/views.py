@@ -62,6 +62,8 @@ def add_vehicle(request):
 @api_view(['DELETE'])
 def remove_vehicle(request, id):
     vehicle_obj = Vehicle.objects.get(id=id)
+    vehicle_obj.delete()
+    serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
 
     client = Client.instance()
     world = client.get_world()
@@ -72,8 +74,6 @@ def remove_vehicle(request, id):
     if len(car_to_delete) == 1:
         car = car_to_delete[0]
         car.destroy()   
-    vehicle_obj.delete()
-    serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
     return Response(serialized_vehicle, status=status.HTTP_200_OK)
 
 @api_view(['PUT'])
