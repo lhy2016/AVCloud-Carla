@@ -13,6 +13,8 @@ function Dashboard(props) {
     const isAdmin = (getCookie("loggedUser") === 'admin')
     const alert = useAlert()  
     const [AVs, getAVs] = useState([]);
+    const [initStates, setInitStates] = useState([]);
+    const [changedAVs, addChangedAVs] = useState([]);
     function updateAVs() {
         var queryAPI = (isAdmin ? "vehicles/getAllAV/" : "vehicles/getAllAV/")
         axios.get(window.serverPrefix + queryAPI)
@@ -23,15 +25,15 @@ function Dashboard(props) {
                 return element;
             })
             getAVs(vehicleObjs)
+            setInitStates(vehicleObjs.map((element)=>element.fields.status))
         })
         .catch((err)=> {
             console.log(err.response)
         })
     }    
     useEffect(()=> {
-        updateAVs()
+        updateAVs();
     }, []);
-
     const defaultCar = {name:"", make:"0", color:"0"}
     const [show, setShow] = useState(false);
     const [carInput, updateCar] = useState(Object.assign(defaultCar))
@@ -44,7 +46,6 @@ function Dashboard(props) {
     function submitCar() {
         axios.post(window.serverPrefix+"vehicles/add_vehicle", carInput)
         .then((response)=> {
-            console.log(response)
             if (response.status == 200) {
                 var car = JSON.parse(response.data)[0]
                 alert.success("Sucessfully created vehicle: " + car.fields.name)
@@ -83,6 +84,32 @@ function Dashboard(props) {
         let newArr = [...AVs];
         newArr[index].selected = !newArr[index].selected
         getAVs(newArr) 
+    }
+    function handleChangeStatus(index, value) {
+        if (AVs[index].fields.status === initStates[index] && !AVs[index].selected) {
+            updateChecked(index)
+        } else if (AVs[index].fields.status !== initStates[index] && AVs[index].selected) {
+            updateChecked(index)
+        }
+        let newArr = [...AVs];
+        newArr[index].fields.status = value;
+        getAVs(newArr)
+        
+    }
+    function submitStatus() {
+         for(var vehicle of AVs.filter((av)=>av.selected)) {
+            axios.post(window.serverPrefix+"vehicles/updateAVstatus/", {"id": vehicle.pk, "status": vehicle.fields.status})
+            .then((response) => {
+                if(response.status === 200) {
+                    alert.success("Successfully change status of the vehicle " + vehicle.fields.name);
+                    updateAVs()
+                }
+            })
+            .catch((err)=> {
+                console.log(err);
+                alert.error("Error: " + err);
+            })
+         } 
     }
 
     return(
@@ -133,7 +160,7 @@ function Dashboard(props) {
             {isAdmin ?
             <Col md="5"style={{marginTop: "20px"}} style={{height:"43px"} }>
                 <div style={{display:AVs.filter(av=>av.selected).length > 0 ? "block": "none"}}>
-                <Button varient="info" style={{marginRight: "7px"}}> Update</Button>
+                <Button varient="info" style={{marginRight: "7px"}} onClick={submitStatus}> Update</Button>
                 <Button variant="danger" onClick={deleteCars}>Delete</Button>
                 </div>
             </Col>:
@@ -143,7 +170,7 @@ function Dashboard(props) {
             <Table striped bordered hover style={{marginTop:"20px"}}>
                     <thead>
                         <tr>
-                            <th> </th>
+                            {isAdmin?<th> </th>:<></>}
                             <th>id</th>
                             <th>Name</th>
                             <th>Make</th>
@@ -155,21 +182,26 @@ function Dashboard(props) {
                     <tbody>
                         {AVs.map((element, index) => 
                             (<tr key={element.pk} onClick={()=>{updateChecked(index)}}>
-                                <td >
+                                {isAdmin ? <td >
                                     <Form.Check checked={element.selected} onClick={(e)=>{e.stopPropagation()}} onChange={()=> {updateChecked(index)}} />
-                                </td>
+                                </td> : <></>}
                                 <td>{element.pk}</td>
                                 <td>{element.fields.name}</td>
                                 <td>{element.fields.make.charAt(0).toUpperCase()+element.fields.make.slice(1)}</td>
                                 <td>{element.fields.color}</td>
                                 <td>{element.fields.created_on}</td>
-                                <td>{element.fields.status}</td>
+                                <td>
+                                    <Form.Select aria-label="status" disabled={!isAdmin} value={element.fields.status} 
+                                                                     onClick={(e)=>{e.stopPropagation()}} onChange={(e)=>{handleChangeStatus(index, e.target.value)}}>
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive">Inactive</option>
+                                    </Form.Select>
+                                </td>
                             </tr>)
                         )}
                     </tbody>
                 </Table>
         </Row>
-        
     </Container>)
 }
 export default Dashboard;

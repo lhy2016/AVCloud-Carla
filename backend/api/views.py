@@ -180,10 +180,13 @@ def getAvailableAV(request):
     thequeryset_json = serializers.serialize('json', avs, fields=('make', 'color', 'name'))
     return HttpResponse(thequeryset_json, content_type='application/json')
 
+@api_view(['POST'])
 def updateAVstatus(request): 
-    avID = request.POST.get(keyavID, 1)
-    newstatus = request.POST.get(keyStatus, 'Active')
+    avID = request.data["id"]
+    newstatus = request.data["status"]
     av_row_match = Vehicle.objects.filter(pk = avID).update(status = newstatus)
+    print("AV  ROW MATCH ********************")
+    print(av_row_match)
     if av_row_match > 0 :
         return  HttpResponse('AV status Updated')
     else:
