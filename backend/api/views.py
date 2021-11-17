@@ -57,13 +57,6 @@ def add_vehicle(request):
         print(f"Serialized is: {serialized_vehicle}")
         return Response(serialized_vehicle, status=status.HTTP_200_OK)
     return Response({"error":"Failed to spawn "+ name + " on Carla map, please try again later"}, status=status.HTTP_400_BAD_REQUEST)
-""""
-    This is how you handle a GET request
-"""
-# def add_vehicle(request, make, model, year, color, created_on, is_deleted):
-#     vehicle = Vehicle(make=make, model=model, year=year, color=color, created_on=created_on, is_deleted=is_deleted)
-#     vehicle.save()
-#     return HttpResponse("<h1>Added Vehicle</h1>")
 
 @api_view(['DELETE'])
 def remove_vehicle(request, id):
@@ -124,12 +117,20 @@ def return_vehicle(request, id):
     serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
     return Response(serialized_vehicle, status=status.HTTP_200_OK)
 
+""""
+select * from api_vehicle A INNER JOIN api_rental B ON A.id = B.vehicle_id_id;
+"""
 @api_view(['GET'])
 def getUserRentalHistory(request, id):
-    print(f"User id is: {id}")
-    vehicle_obj = Rental.objects.get(id=id)
-    print(f"Vehicle Obj is: {vehicle_obj}")
-    serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
+    # print(f"User id is: {id}")
+    # vehicle_obj = Rental.objects.get(id=id)
+    # print(f"Vehicle Obj is: {vehicle_obj}")
+    # serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
+    # print(f'Query test is: {Rental.objects.filter(vehicle_id__status="connected").filter(active_status="f").query }')
+    list_of_vehilces=Rental.objects.select_related("vehicle_id") 
+    print(f'Query test is: {Rental.objects.select_related("vehicle_id").query }')
+
+    serialized_vehicle = serializers.serialize('json', list_of_vehilces)
     return Response(serialized_vehicle, status=status.HTTP_200_OK)
 
 """
