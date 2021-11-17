@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.http.response import HttpResponseBadRequest
 from django.utils.timezone import activate
 from .models import *
+from .serializers import *
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -122,19 +123,16 @@ select * from api_vehicle A INNER JOIN api_rental B ON A.id = B.vehicle_id_id;
 """
 @api_view(['GET'])
 def getUserRentalHistory(request, id):
-    # print(f"User id is: {id}")
-    # vehicle_obj = Rental.objects.get(id=id)
-    # print(f"Vehicle Obj is: {vehicle_obj}")
-    # serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
-    # print(f'Query test is: {Rental.objects.filter(vehicle_id__status="connected").filter(active_status="f").query }')
-    list_of_vehicles=Rental.objects.select_related("vehicle_id").only("vehicle_id__name","vehicle_id__make", "vehicle_id__color", "time_started", "time_finished", "duration", "distance")
 
-    print(f'Query test is: {Rental.objects.select_related("vehicle_id").only("vehicle_id__name","vehicle_id__make", "vehicle_id__color", "time_started", "time_finished", "duration", "distance").query }')
+    list_of_vehicles=Rental.objects.filter(id=id).select_related("vehicle_id").only("vehicle_id_id__name","vehicle_id_id__make", "vehicle_id_id__color", "time_started", "time_finished", "duration", "distance")
+    # get_vehicle_info = Vehicle.objects.filter(id=id)
+    serialized_rental_history = RentalVehicleSerializer(list_of_vehicles, many=True)
+   
+    # serialized_vehicle_rent = serializers.serialize('json', list_of_vehicles)
+    # serialized_vehicle_list = serializers.serialize('json', get_vehicle_info)
 
-    serialized_vehicle = serializers.serialize('json', list_of_vehicles)
-    print(f"Type of object is: ${type(serialized_vehicle)}")
-    # return Response(serialized_vehicle, status=status.HTTP_200_OK)
-    return HttpResponse(serialized_vehicle, content_type='application/json')
+    return Response (serialized_rental_history.data, status=status.HTTP_200_OK)
+
 
 
 """
