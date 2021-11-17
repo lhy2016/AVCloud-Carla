@@ -15,6 +15,7 @@ function Dashboard(props) {
     const alert = useAlert()  
     const [AVs, getAVs] = useState([]);
     const [initStates, setInitStates] = useState([]);
+    const [changedAVs, addChangedAVs] = useState([]);
     const [VehicleList, userRentalList] = useState([]);
 
     const getUserRentalList = () => {
@@ -52,7 +53,6 @@ function Dashboard(props) {
             console.log(err.response)
         })
     }
-
     useEffect(()=> {
         getUserRentalList();
         updateAVs();
