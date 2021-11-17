@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.http.response import HttpResponseBadRequest
 from django.utils.timezone import activate
 from .models import *
+from .serializers import *
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -57,13 +58,6 @@ def add_vehicle(request):
         print(f"Serialized is: {serialized_vehicle}")
         return Response(serialized_vehicle, status=status.HTTP_200_OK)
     return Response({"error":"Failed to spawn "+ name + " on Carla map, please try again later"}, status=status.HTTP_400_BAD_REQUEST)
-""""
-    This is how you handle a GET request
-"""
-# def add_vehicle(request, make, model, year, color, created_on, is_deleted):
-#     vehicle = Vehicle(make=make, model=model, year=year, color=color, created_on=created_on, is_deleted=is_deleted)
-#     vehicle.save()
-#     return HttpResponse("<h1>Added Vehicle</h1>")
 
 @api_view(['DELETE'])
 def remove_vehicle(request, id):
@@ -98,6 +92,7 @@ def mark_unavailable(request, id):
     serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
     return Response(serialized_vehicle, status=status.HTTP_200_OK)
 
+@api_view(['POST'])
 def rent_vehicle(request):
     time_started = request.POST.get('time_started')
     time_finished = request.POST.get('time_finished')
@@ -110,13 +105,35 @@ def rent_vehicle(request):
     rental_vehicle = Rental(time_started=time_started, time_finished=time_finished, distance=distance, duration=duration,
     user_id_id=user_id_id, vehicle_id_id=vehicle_id_id, active_status=active_status)
     rental_vehicle.save()
-    return HttpResponse("<h1>Vehicle is rented</h1>")
+    vehicle_obj = Rental.objects.get(id=rental_vehicle.id)
+    serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
 
+    return Response(serialized_vehicle, status=status.HTTP_200_OK)
 
+@api_view(['PUT'])
 def return_vehicle(request, id):
     active_status = "False"
-    rental_vehicle = Rental.objects.filter(id=id).update(is_active=active_status)
-    return HttpResponse("<h1>Car has been returned</h1>")
+    Rental.objects.filter(id=id).update(is_active=active_status)
+    vehicle_obj = Rental.objects.get(id=id)
+    serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
+    return Response(serialized_vehicle, status=status.HTTP_200_OK)
+
+""""
+select * from api_vehicle A INNER JOIN api_rental B ON A.id = B.vehicle_id_id;
+"""
+@api_view(['GET'])
+def getUserRentalHistory(request, id):
+
+    list_of_vehicles=Rental.objects.filter(id=id).select_related("vehicle_id").only("vehicle_id_id__name","vehicle_id_id__make", "vehicle_id_id__color", "time_started", "time_finished", "duration", "distance")
+    # get_vehicle_info = Vehicle.objects.filter(id=id)
+    serialized_rental_history = RentalVehicleSerializer(list_of_vehicles, many=True)
+   
+    # serialized_vehicle_rent = serializers.serialize('json', list_of_vehicles)
+    # serialized_vehicle_list = serializers.serialize('json', get_vehicle_info)
+
+    return Response (serialized_rental_history.data, status=status.HTTP_200_OK)
+
+
 
 """
 select * from api_vehicle A INNER JOIN api_rental B ON A.id = B.vehicle_id_id 
@@ -130,9 +147,8 @@ def getAVStatus(request):
     list_of_vehilces=Rental.objects.filter(vehicle_id__status="connected").filter(active_status="f") 
     # print(f'Query test is: {Rental.objects.filter(vehicle_id__status="connected").query }')
 
-    serialized_vehicle = serializers.serialize('json', list_of_vehilces)
+    serialized_vehicle = serializers.serialize('json', list_of_vehilces, content_type='application/json')
     return Response(serialized_vehicle, status=status.HTTP_200_OK)
-
 
 keyavID = "vehicle_id"
 keyStatus = 'status'
@@ -162,13 +178,10 @@ def getAvailableAV(request):
     thequeryset_json = serializers.serialize('json', avs, fields=('make', 'color', 'name'))
     return HttpResponse(thequeryset_json, content_type='application/json')
 
-@api_view(['POST'])
 def updateAVstatus(request): 
-    avID = request.data["id"]
-    newstatus = request.data["status"]
+    avID = request.POST.get(keyavID, 1)
+    newstatus = request.POST.get(keyStatus, 'Active')
     av_row_match = Vehicle.objects.filter(pk = avID).update(status = newstatus)
-    print("AV  ROW MATCH ********************")
-    print(av_row_match)
     if av_row_match > 0 :
         return  HttpResponse('AV status Updated')
     else:
