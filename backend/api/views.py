@@ -132,7 +132,10 @@ def getUserRentalHistory(request, id):
     print(f'Query test is: {Rental.objects.select_related("vehicle_id").only("vehicle_id__name","vehicle_id__make", "vehicle_id__color", "time_started", "time_finished", "duration", "distance").query }')
 
     serialized_vehicle = serializers.serialize('json', list_of_vehicles)
-    return Response(serialized_vehicle, status=status.HTTP_200_OK)
+    print(f"Type of object is: ${type(serialized_vehicle)}")
+    # return Response(serialized_vehicle, status=status.HTTP_200_OK)
+    return HttpResponse(serialized_vehicle, content_type='application/json')
+
 
 """
 select * from api_vehicle A INNER JOIN api_rental B ON A.id = B.vehicle_id_id 
@@ -146,7 +149,7 @@ def getAVStatus(request):
     list_of_vehilces=Rental.objects.filter(vehicle_id__status="connected").filter(active_status="f") 
     # print(f'Query test is: {Rental.objects.filter(vehicle_id__status="connected").query }')
 
-    serialized_vehicle = serializers.serialize('json', list_of_vehilces)
+    serialized_vehicle = serializers.serialize('json', list_of_vehilces, content_type='application/json')
     return Response(serialized_vehicle, status=status.HTTP_200_OK)
 
 keyavID = "vehicle_id"
