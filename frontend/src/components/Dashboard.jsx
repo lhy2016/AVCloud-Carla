@@ -175,6 +175,7 @@ function Dashboard(props) {
                             <th>Time Finished</th>
                             <th>Distance</th>
                             <th>Duration</th>
+                            <th>Created On</th>
 
                         </tr>
                     </thead>
