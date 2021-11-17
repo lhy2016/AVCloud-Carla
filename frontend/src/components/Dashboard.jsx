@@ -15,7 +15,6 @@ function Dashboard(props) {
     const alert = useAlert()  
     const [AVs, getAVs] = useState([]);
     const [initStates, setInitStates] = useState([]);
-    const [changedAVs, addChangedAVs] = useState([]);
     const [VehicleList, userRentalList] = useState([]);
 
     const getUserRentalList = () => {
@@ -25,11 +24,6 @@ function Dashboard(props) {
             // console.log(response.data)
             var vehicleList = response.data;
             console.log(typeof(vehicleList))
-            vehicleList.map((element)=> {
-                element["selected"] = false;
-                return element;
-            })
-            console.log(vehicleList)
             userRentalList(vehicleList)
         })
         .catch((error)=> {
