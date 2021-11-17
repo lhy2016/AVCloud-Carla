@@ -124,6 +124,14 @@ def return_vehicle(request, id):
     serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
     return Response(serialized_vehicle, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+def getUserRentalHistory(request, id):
+    print(f"User id is: {id}")
+    vehicle_obj = Rental.objects.get(id=id)
+    print(f"Vehicle Obj is: {vehicle_obj}")
+    serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
+    return Response(serialized_vehicle, status=status.HTTP_200_OK)
+
 """
 select * from api_vehicle A INNER JOIN api_rental B ON A.id = B.vehicle_id_id 
 Where A.status = "connected" and B.active_status = "False"
@@ -138,7 +146,6 @@ def getAVStatus(request):
 
     serialized_vehicle = serializers.serialize('json', list_of_vehilces)
     return Response(serialized_vehicle, status=status.HTTP_200_OK)
-
 
 keyavID = "vehicle_id"
 keyStatus = 'status'
