@@ -127,10 +127,11 @@ def getUserRentalHistory(request, id):
     # print(f"Vehicle Obj is: {vehicle_obj}")
     # serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
     # print(f'Query test is: {Rental.objects.filter(vehicle_id__status="connected").filter(active_status="f").query }')
-    list_of_vehilces=Rental.objects.select_related("vehicle_id") 
+    list_of_vehicles=Rental.objects.select_related("vehicle_id").only("vehicle_id__name","vehicle_id__make", "vehicle_id__color", "time_started", "time_finished", "duration", "distance")
+
     print(f'Query test is: {Rental.objects.select_related("vehicle_id").only("vehicle_id__name","vehicle_id__make", "vehicle_id__color", "time_started", "time_finished", "duration", "distance").query }')
 
-    serialized_vehicle = serializers.serialize('json', list_of_vehilces)
+    serialized_vehicle = serializers.serialize('json', list_of_vehicles)
     return Response(serialized_vehicle, status=status.HTTP_200_OK)
 
 """
