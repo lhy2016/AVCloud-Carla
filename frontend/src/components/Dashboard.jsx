@@ -46,7 +46,6 @@ function Dashboard(props) {
     function submitCar() {
         axios.post(window.serverPrefix+"vehicles/add_vehicle", carInput)
         .then((response)=> {
-            console.log(response)
             if (response.status == 200) {
                 var car = JSON.parse(response.data)[0]
                 alert.success("Sucessfully created vehicle: " + car.fields.name)
@@ -99,7 +98,17 @@ function Dashboard(props) {
     }
     function submitStatus() {
          for(var vehicle of AVs.filter((av)=>av.selected)) {
-             
+            axios.post(window.serverPrefix+"vehicles/updateAVstatus/", {"id": vehicle.pk, "status": vehicle.fields.status})
+            .then((response) => {
+                if(response.status === 200) {
+                    alert.success("Successfully change status of the vehicle " + vehicle.fields.name);
+                    updateAVs()
+                }
+            })
+            .catch((err)=> {
+                console.log(err);
+                alert.error("Error: " + err);
+            })
          } 
     }
 
