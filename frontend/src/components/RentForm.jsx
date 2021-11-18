@@ -7,17 +7,19 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 import Navbar from "./Navbar";
-import '../css/dashboard.css';
+import '../css/rentForm.css';
+import {FaMapMarkerAlt} from "react-icons/fa";
 
 class RentFromComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      selectedMarker: "pickup",
     };
   }
 
   componentDidMount() {
-    console.log(this.props);
+    // console.log(this.props);
   }
 
   render() {
@@ -26,7 +28,20 @@ class RentFromComponent extends Component {
     return (
       <Container className="content-container">
         <Navbar active="rent"/>
-        This is rent form for vehicleId: {vehicleId}
+        <Row style={{marginTop:"50px"}}>
+          <h4>Select Pickup location and Destination</h4>
+          <Col md="4">
+          <div className="pic-des-container"> 
+            <span> Now select: </span>
+            <Form.Select aria-label="Default select example" style={{width: "200px"}} 
+                value={this.state.selectedMarker} onChange={(e)=>{this.setState({selectedMarker: e.target.value})}}>
+              <option value="pickup">Pickup</option>
+              <option value="dest">Destination</option>
+            </Form.Select>
+            <FaMapMarkerAlt id="select-marker" className={this.state.selectedMarker}/>
+          </div>
+          </Col>
+        </Row>
       </Container>
     )
   }

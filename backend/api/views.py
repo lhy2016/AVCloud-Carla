@@ -173,6 +173,7 @@ def addServiceRecord(request):
     # retrun fullist
     return HttpResponse(serializers.serialize('json', MaintenanceRecord.objects.filter(vehicle_id = avID)), content_type='application/json')
 
+@api_view(['GET'])
 def getAvailableAV(request): 
     avs = Vehicle.objects.filter(status = 'Active')
     thequeryset_json = serializers.serialize('json', avs, fields=('make', 'color', 'name'))
