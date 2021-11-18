@@ -1,7 +1,7 @@
 .pic-des-container {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
     margin-top:40px;
 }
@@ -9,9 +9,24 @@
 #select-marker {
     height: 20px;
 }
-#select-marker.pickup {
-    color: rgb(233, 184, 21);
+.marker {
+    position: absolute;
+    transform: translate(-50%, -100%);
 }
-#select-marker.dest {
-    color: rgb(56, 120, 192);
+.pickup {
+    font-size: 25px;
+    color: rgb(228, 207, 91);
+}
+.dest {
+    font-size: 25px;
+    color: rgb(74, 127, 189);
+}
+.map-container {
+    height: 500px;
+    width: 500px;
+    margin-top:30px;
+    background:linear-gradient(0deg, rgba(75, 75, 75, 0.3), rgba(75, 75, 75, 0.3)),url("../imgs/map.jpg");
+    background-position: center center;
+    background-size: 100%;
+    position: relative;
 }
