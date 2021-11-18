@@ -1,0 +1,17 @@
+.pic-des-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    margin-top:40px;
+}
+
+#select-marker {
+    height: 20px;
+}
+#select-marker.pickup {
+    color: rgb(233, 184, 21);
+}
+#select-marker.dest {
+    color: rgb(56, 120, 192);
+}

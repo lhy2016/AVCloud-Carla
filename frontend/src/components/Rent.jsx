@@ -8,7 +8,7 @@ import Table from 'react-bootstrap/Table';
 import Navbar from "./Navbar";
 import '../css/dashboard.css';
 
-const GET_AVAILABLE_VEHICLES_API = '/vehicles/getAllAV/';
+const GET_AVAILABLE_VEHICLES_API = '/vehicles/getAvailableAV/';
 
 class RentComponent extends Component {
   constructor(props) {
