@@ -8,8 +8,8 @@ class Client:
 
     @staticmethod
     def instance():
-        if Client.__instance == None:
-            Client.__instance = carla.Client('localhost', 2000)
+        if Client.__instance == None: 
+            Client.__instance = carla.Client('13.52.230.201', 2000)
             Client.__instance.set_timeout(20.0)
             Client.__instance.load_world("Town02")
         return Client.__instance
