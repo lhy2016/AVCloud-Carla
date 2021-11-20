@@ -39,7 +39,7 @@ class Admin extends Component {
   }
   fetchUsers = () => {
     axios
-      .get(window.serverRoot + "api/users")
+      .get("/api/users")
       .then((response) => {
         if (response.data.length > 0) {
           for (var user of response.data) {
@@ -68,7 +68,7 @@ class Admin extends Component {
       this.props.animator("Please select at least 1 User", "info");
     } else {
       axios
-        .post(window.serverRoot + "api/updateUsers", {
+        .post("/api/updateUsers", {
           users: selectedUsers,
           status: statusToUpdate,
         })
@@ -99,7 +99,7 @@ class Admin extends Component {
       this.props.animator("Please select at least 1 User", "info");
     } else {
       axios
-        .post(window.serverRoot + "api/deleteUsers", {
+        .post("/api/deleteUsers", {
           users: selectedUsers,
         })
         .then((response) => {

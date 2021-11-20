@@ -45,7 +45,7 @@ class RentComponent extends Component {
       setInterval(
         ()=> {
           var rental_obj = JSON.parse(getCookie("active_rental"));
-          axios.get(window.serverPrefix + "vehicles/getRentalStatus/" + rental_obj["pk"])
+          axios.get("/vehicles/getRentalStatus/" + rental_obj["pk"])
           .then((response)=> {
             if (response.status == 200) {
               var ret = response.data[0];

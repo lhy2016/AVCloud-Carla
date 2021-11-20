@@ -62,14 +62,14 @@ class PostProperties extends Component {
   componentDidMount() {
     if (sessionStorage.getItem("user_id") != null) {
       var propertiesLogic = this.generatePropertiesLogic();
-      axios.post(window.serverRoot + "api/property/query", propertiesLogic)
+      axios.post("/api/property/query", propertiesLogic)
       .then((response)=>{
           this.setState({properties: response.data});
       })
       .catch((error)=>{
           console.log(error);
       });
-      axios.get(window.serverRoot + "api/applications/approver/" + sessionStorage.getItem("user_id"))
+      axios.get("/api/applications/approver/" + sessionStorage.getItem("user_id"))
       .then((response)=> {
         this.setState({applications: response.data});
       })
@@ -117,7 +117,7 @@ class PostProperties extends Component {
       newProperty.append("imgs", file);
     }
     this.postRequest(
-      window.serverRoot + "api/property/create",
+      "/api/property/create",
       newProperty,
       config,
       this.postPropertySuccess
@@ -135,8 +135,8 @@ class PostProperties extends Component {
     this.updateApplication(applicationId, "REJECTED");
   }
   updateApplication = (applicationId, statusToUpdate) => {
-    var url = "api/application/" + applicationId + "/" + (statusToUpdate == "APPROVED" ? "approve" : "reject");
-    axios.get(window.serverRoot + url)
+    var url = "/api/application/" + applicationId + "/" + (statusToUpdate == "APPROVED" ? "approve" : "reject");
+    axios.get(url)
     .then((response)=>{
       console.log(response);
     })

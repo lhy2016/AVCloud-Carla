@@ -14,7 +14,7 @@ function AuthForm(props) {
     
     function handleFormSubmit(action) {
         axios
-          .post(window.serverPrefix + "user/" + action, formInput)
+          .post("/user/" + action, formInput)
           .then((response) => {
             if (response.status === 201) {
                 alert.success("User created, please Login")
@@ -33,8 +33,9 @@ function AuthForm(props) {
             updateInput({username:"", password:""})
           })
           .catch((err) => {
-              console.log(err.response.data)
-              alert.error("Error "+err.response.status.toString()+": "+err.response.data["error"]);
+              console.error(err);
+              const message = err.response ? err.response : err.message;
+              alert.error("Error: " + message);
           });
     }
 

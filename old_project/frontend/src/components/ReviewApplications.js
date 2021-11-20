@@ -17,7 +17,7 @@ class ReviewApplications extends Component {
   // GET applications by approver id
   componentDidMount() {
     axios
-      .get(window.serverRoot + "api/applications/approver/" + this.state.userID)
+      .get("/api/applications/approver/" + this.state.userID)
       .then((res) => {
         const data = res.data;
         console.log(data);
@@ -39,7 +39,7 @@ class ReviewApplications extends Component {
 
   approveApplication = (application_id) => {
     axios
-      .get(window.serverRoot + "api/application/" + application_id + "/approve")
+      .get("/api/application/" + application_id + "/approve")
       .then((response) => this.approveApplicationSuccess(response))
       .catch(function (error) {
         if (error.response) {
@@ -54,7 +54,7 @@ class ReviewApplications extends Component {
 
   rejectApplication = (application_id) => {
     axios
-      .get(window.serverRoot + "api/application/" + application_id + "/reject")
+      .get("/api/application/" + application_id + "/reject")
       .then((response) => this.rejectApplicationSuccess(response))
       .catch(function (error) {
         if (error.response) {
