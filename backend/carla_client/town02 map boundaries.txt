@@ -1,0 +1,4 @@
+upper left: x: 0, y:106
+lower left: x: 0, y:306
+upper right: x:194, y:106
+lower right: x:194, y:306
