@@ -110,17 +110,19 @@ class TrackComponent extends Component {
 
   showSelectedVehicleSensorData = () => {
     const { sensorDataOfSelectedVehicle = {} } = this.state;
-    const keys = Object.keys(sensorDataOfSelectedVehicle);
+    const { speed, location = {} }  = sensorDataOfSelectedVehicle;
     return (
       <Card>
         <Card.Title>Sensor data</Card.Title>
         <Card.Body>
-          {keys.map((key) => (
-            <Row key={key}>
-              <Col>{key}</Col>
-              <Col>{sensorDataOfSelectedVehicle[key]}</Col>
-            </Row>
-          ))}
+          <Row>
+            <Col>Speed</Col>
+            <Col>{speed}</Col>
+          </Row>
+          <Row>
+            <Col>Location</Col>
+            <Col>{`( ${location.x},  ${location.y} )`}</Col>
+          </Row>
         </Card.Body>
       </Card>
     )

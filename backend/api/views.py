@@ -246,11 +246,11 @@ def carlaUpdate(request):
     return_data = {
         'speed':  (3.6 * math.sqrt(car3dv .x**2 + car3dv .y**2 + car3dv .z**2)),  # km/h
         'location': {
-            'X': cartransform.location.x,
-            'Y': cartransform.location.y
+            'x': cartransform.location.x,
+            'y': cartransform.location.y
         }
     }
-    return HttpResponse(serializers.serialize('json', return_data), status=status.HTTP_200_OK)
+    return HttpResponse(json.dumps(return_data), status=status.HTTP_200_OK)
 
 # utility function
 def httpResponse_from_queryset (thequeryset) :
