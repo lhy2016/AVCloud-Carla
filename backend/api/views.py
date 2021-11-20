@@ -297,9 +297,23 @@ def getAllAV(request):
     thequeryset_json = serializers.serialize('json', avs)
     return HttpResponse(thequeryset_json, content_type='application/json')
 
+@api_view(['GET'])
 def carlaUpdate(request): 
     avID = request.GET.get(keyavID, 1)
-    car = get_carla_car_obj (avID)
+    # car = get_carla_car_obj (avID)
+    vehicle_obj = Vehicle.objects.get(pk=avID)
+    vehicle_name = vehicle_obj.name
+    client = Client.instance()
+    world = client.get_world()
+
+    all_cars = world.get_actors().filter("vehicle.*")
+    carla_car = [car for car in all_cars if car.attributes.get("role_name") == vehicle_name]
+    if len(carla_car) != 1:
+        print("cannot find vehicle")
+        return HttpResponseBadRequest("Error: Can't find the vehicle you want to rent")
+    print("get car")
+    car = carla_car[0]
+
     car3dv = car.get_velocity()
     cartransform = car.get_transform()
 
@@ -318,7 +332,7 @@ def httpResponse_from_queryset (thequeryset) :
     return HttpResponse(thequeryset_json, content_type='application/json')
 
 def get_carla_car_obj (vehicle_id):
-    vehicle_obj = Vehicle.objects.get(id=vehicle_id)
+    vehicle_obj = Vehicle.objects.get(pk=vehicle_id)
     vehicle_name = vehicle_obj.name
     client = Client.instance()
     world = client.get_world()
