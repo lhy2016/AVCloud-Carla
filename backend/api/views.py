@@ -118,6 +118,8 @@ def rent_vehicle(request):
 
     rental = Rental(pickup_coord=pickupCoord, dest_coord=destCoord, user_id=user_obj, vehicle_id=vehicle_obj, active_status=True)
     rental.save()
+    
+    Vehicle.objects.filter(id=vehicleId).update(status="Inactive")
 
     client = Client.instance()
     world = client.get_world()
@@ -177,8 +179,17 @@ def navigate(agent, vehicle, rental_id):
                 navigate(newAgent, vehicle, rental_id)
             elif process == "toDestination":
                 print("destination has been reached. Stop navigation")
-                from django.utils.timezone import now
-                rental_qs.update(process="arrived", time_finished=now(), active_status=False)
+                import datetime
+                vehicle_obj = rental_obj.vehicle_id
+                Vehicle.objects.filter(id=vehicle_obj.id).update(status="Active")
+                
+                start = rental_obj.time_started
+                end = datetime.datetime.now()
+                tdelta = end - start
+                seconds = tdelta.seconds
+                print("*********SECONDS")
+                print(seconds)
+                rental_qs.update(process="arrived", time_finished=datetime.datetime.now(), active_status=False, duration=seconds)
 
                 
             break

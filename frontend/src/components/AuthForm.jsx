@@ -27,8 +27,11 @@ function AuthForm(props) {
                 var dateString = date.toUTCString()
                 document.cookie = "loggedUser="+response.data["user"]+"; expires="+dateString+"; path=/";
                 document.cookie = "userId="+response.data["id"]+"; expires="+dateString+"; path=/";
-                
-                navigate('/dashboard')
+                if (response.data["user"] === "admin") {
+                    navigate('/dashboard')
+                } else {
+                    navigate('/rent')
+                }
             }
             updateInput({username:"", password:""})
           })

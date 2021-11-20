@@ -54,8 +54,15 @@ class RentComponent extends Component {
                 active_rental: ret
               });
               if (ret.fields.process === "arrived") {
-                alert("Arrived");
+                alert("Arrived the destination\n\
+                       time started: " + ret.fields.time_started + "\n\
+                       time finished: " + ret.fields.time_finished + "\n\
+                       From: " + ret.fields.pickup_coord + "\n\
+                       To: " + ret.fields.dest_coord + "\n\
+                       Duration: " + ret.fields.duration + " seconds");
                 clearInterval(intervalId)
+                document.cookie = "active_rental=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                window.location.href = "/rent"
               }
             }
           })
@@ -122,7 +129,7 @@ class RentComponent extends Component {
                   <th>Make</th>
                   <th>Color</th>
                   <th>Status</th>
-                  <th>Operation</th>
+                  <th>Start</th>
               </tr>
             </thead>
             <tbody>
@@ -131,7 +138,7 @@ class RentComponent extends Component {
                 <td>{this.state.active_rental.fields.make}</td>
                 <td>{this.state.active_rental.fields.color}</td>
                 <td>{this.state.active_rental.fields.process}</td>
-                <td></td>
+                <td>{this.state.active_rental.fields.time_started}</td>
               </tr>
             </tbody>
           </Table>
