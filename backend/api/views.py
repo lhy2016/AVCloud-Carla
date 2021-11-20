@@ -12,6 +12,8 @@ from datetime import datetime
 import random
 from carla_client.Client import Client
 import threading
+import json
+import math
 # Create your views here.
 
 def homepage(request):
@@ -255,10 +257,34 @@ def getAllAV(request):
     return HttpResponse(thequeryset_json, content_type='application/json')
 
 def carlaUpdate(request): 
-    # mongodb just pull
+    avID = request.GET.get(keyavID, 1)
+    car = get_carla_car_obj (avID)
+    car3dv = car.get_velocity()
+    cartransform = car.get_transform()
 
-    return
+    return_data = {
+        'speed':  (3.6 * math.sqrt(car3dv .x**2 + car3dv .y**2 + car3dv .z**2)),  # km/h
+        'location': {
+            'x': cartransform.location.x,
+            'y': cartransform.location.y
+        }
+    }
+    return HttpResponse(json.dumps(return_data), status=status.HTTP_200_OK)
 
+# utility function
 def httpResponse_from_queryset (thequeryset) :
     thequeryset_json = serializers.serialize('json', thequeryset)
     return HttpResponse(thequeryset_json, content_type='application/json')
+
+def get_carla_car_obj (vehicle_id):
+    vehicle_obj = Vehicle.objects.get(id=vehicle_id)
+    vehicle_name = vehicle_obj.name
+    client = Client.instance()
+    world = client.get_world()
+    
+    all_cars = world.get_actors().filter("vehicle.*")
+    carla_car = [car for car in all_cars if car.attributes.get("role_name") == vehicle_name]
+    if len(carla_car) != 1:
+        return Response("Error: Can't find the vehicle you want to rent", status=status.HTTP_400_BAD_REQUEST)
+    
+    return carla_car[0]

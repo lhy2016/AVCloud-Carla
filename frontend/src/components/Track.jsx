@@ -10,7 +10,7 @@ import Navbar from './Navbar';
 
 
 const GET_VEHICLES_API = '/vehicles/getAllAV/'
-const GET_VEHICLE_SENSOR_DATA_API = '/get/vehicle/sensordata';
+const GET_VEHICLE_SENSOR_DATA_API = '/vehicles/carlaUpdate/';
 
 const REFRESH_TIME_MS = 1000;
 
@@ -46,7 +46,8 @@ class TrackComponent extends Component {
       const selectedVehicleId = vehicleIds[0];
       newState = Object.assign(newState, { selectedVehicleId });
 
-      return getSensorDataFromServerPromise(selectedVehicleId)
+      const params = { vehicle_id: selectedVehicleId };
+      return axios.get(GET_VEHICLE_SENSOR_DATA_API, { params });
     })
     .then((response) => {
 
@@ -109,38 +110,37 @@ class TrackComponent extends Component {
 
   showSelectedVehicleSensorData = () => {
     const { sensorDataOfSelectedVehicle = {} } = this.state;
-    const keys = Object.keys(sensorDataOfSelectedVehicle);
+    const { speed, location = {} }  = sensorDataOfSelectedVehicle;
     return (
       <Card>
         <Card.Title>Sensor data</Card.Title>
         <Card.Body>
-          {keys.map((key) => (
-            <Row key={key}>
-              <Col>{key}</Col>
-              <Col>{sensorDataOfSelectedVehicle[key]}</Col>
-            </Row>
-          ))}
+          <Row>
+            <Col>Speed</Col>
+            <Col>{speed}</Col>
+          </Row>
+          <Row>
+            <Col>Location</Col>
+            <Col>{`( ${location.x},  ${location.y} )`}</Col>
+          </Row>
         </Card.Body>
       </Card>
     )
   }
 
   dropDownOnChangeHandler = (event) => {
-    const { target: { name, value } } = event;
+    const { target: { name, value: vehicleId } } = event;
     this.setState({
-      [name]: value,
+      [name]: vehicleId,
     });
 
-    getSensorDataFromServerPromise(value)
-    .then((response) => {
-
-      // Parse sensorData from response
-      const { status, statusText, data: sensorData } = response;
-      if (status !== 200) throw new Error(`Expect ${GET_VEHICLE_SENSOR_DATA_API} responses 200 instead of ${status}: ${statusText}`);
-
-      // Update state to the new state
-      this.setState({ sensorDataOfSelectedVehicle: sensorData });
-    });
+    const params = { vehicle_id: vehicleId };
+    axios.get(GET_VEHICLE_SENSOR_DATA_API, { params })
+      .then((response) => {
+        const { status, statusText, data: sensorData } = response;
+        if (status !== 200) throw new Error(`Expect ${GET_VEHICLE_SENSOR_DATA_API} responses 200 instead of ${status}: ${statusText}`);
+        this.setState({ sensorDataOfSelectedVehicle: sensorData });
+      });
   }
 
   render() {
@@ -152,18 +152,6 @@ class TrackComponent extends Component {
       </Container>
     );
   }
-}
-
-function getSensorDataFromServerPromise(vehicleId) {
-  const location = JSON.stringify({
-    N: (456 + Math.random() / 1000).toFixed(7),
-    W: (789 + Math.random() / 1000).toFixed(7),
-  });
-  const speed = `${(66 + Math.random()).toFixed(1)} miles/hr`
-  return Promise.resolve({
-    status: 200,
-    data: { vehicleId, speed, location },
-  });
 }
 
 export default TrackComponent;
