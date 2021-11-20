@@ -1,7 +1,9 @@
 from django.db import models
-from django.utils.timezone import now
 from user.models import User
 # Create your models here.
+import datetime
+now = datetime.datetime.now
+
 
 class Vehicle(models.Model):
 
