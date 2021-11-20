@@ -12,7 +12,7 @@ import Navbar from './Navbar';
 
 const GET_VEHICLES_API = '/vehicles/getAllAV/';
 const GET_ALL_SERVICE_HISTORY_API = '/vehicles/getServiceHistory/';
-const ADD_SERVICE_RECORD_API = '/vehicles/addServiceRecord/'
+const ADD_SERVICE_RECORD_API = '/vehicles/addServiceRecord/';
 
 class MaintenanceRecordComponent extends Component {
 
@@ -65,12 +65,13 @@ class MaintenanceRecordComponent extends Component {
 
       // Save selectedVehicleRecords to new state
       newState = Object.assign(newState, { selectedVehicleRecords });
-
-      // Update state to the new state
-      this.setState(newState);
     })
     .catch((err) => {
       console.error('[Maintenance] Failed to get list of vehicles in componentDidMount', err);
+    })
+    .finally(() => {
+      // Update state to the new state
+      this.setState(newState);
     })
 
   }
