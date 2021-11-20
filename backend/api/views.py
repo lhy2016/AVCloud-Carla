@@ -238,8 +238,7 @@ def getAllAV(request):
     return HttpResponse(thequeryset_json, content_type='application/json')
 
 def carlaUpdate(request): 
-    data = request.data
-    avID = data.get(keyavID, 1)
+    avID = request.GET.get(keyavID, 1)
     car = get_carla_car_obj (avID)
     car3dv = car.get_velocity()
     cartransform = car.get_transform()
