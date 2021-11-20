@@ -7,6 +7,8 @@ import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 import Navbar from "./Navbar";
 import '../css/dashboard.css';
+import '../js/config'
+import {getCookie} from '../js/utilities'
 
 const GET_AVAILABLE_VEHICLES_API = '/vehicles/getAvailableAV/';
 
@@ -15,27 +17,32 @@ class RentComponent extends Component {
     super(props);
     this.state = {
       availableVehicles: [],
+      is_renting : (getCookie("active_rental") !== undefined)
     };
   }
 
   componentDidMount() {
-    axios.get(GET_AVAILABLE_VEHICLES_API)
-      .then((response) => {
-        const { data: vehicles } = response;
-        const availableVehicles = vehicles.map((vehicle) => {
-          const { pk, fields: { make, color, name } } = vehicle;
-          return {
-            vehicleId: pk,
-            name,
-            make,
-            color,
-          };
+    if (!this.state.is_renting) {
+      axios.get(GET_AVAILABLE_VEHICLES_API)
+        .then((response) => {
+          const { data: vehicles } = response;
+          const availableVehicles = vehicles.map((vehicle) => {
+            const { pk, fields: { make, color, name } } = vehicle;
+            return {
+              vehicleId: pk,
+              name,
+              make,
+              color,
+            };
+          });
+          this.setState({ availableVehicles });
+        })
+        .catch((err) => {
+          console.error(err);
         });
-        this.setState({ availableVehicles });
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    } else {
+      console.log("you are reting");
+    }
   }
 
   showAvaliabeVehicles = () => {
