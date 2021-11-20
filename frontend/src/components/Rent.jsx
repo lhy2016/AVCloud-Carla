@@ -42,22 +42,25 @@ class RentComponent extends Component {
           console.error(err);
         });
     } else {
-      var rental_obj = JSON.parse(getCookie("active_rental"));
-
-      axios.get(window.serverPrefix + "vehicles/getRentalStatus/" + rental_obj["pk"])
-      .then((response)=> {
-        if (response.status == 200) {
-          var ret = response.data[0];
-          console.log(ret);
-          ret.fields.process = "aha"
-          this.setState({
-            active_rental: ret
-          });
-        }
-      })
+      setInterval(
+        ()=> {
+          var rental_obj = JSON.parse(getCookie("active_rental"));
+          axios.get(window.serverPrefix + "vehicles/getRentalStatus/" + rental_obj["pk"])
+          .then((response)=> {
+            if (response.status == 200) {
+              var ret = response.data[0];
+              console.log(ret);
+              this.setState({
+                active_rental: ret
+              });
+            }
+          })
       .catch((err)=> {
         console.log(err);
       })
+        },1000000
+      )
+      
     }
   }
 
@@ -120,11 +123,11 @@ class RentComponent extends Component {
             </thead>
             <tbody>
               <tr>
-                <th>{this.state.active_rental.fields.process}</th> 
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
+                <td>{this.state.active_rental.fields.name}</td> 
+                <td>{this.state.active_rental.fields.make}</td>
+                <td>{this.state.active_rental.fields.color}</td>
+                <td>{this.state.active_rental.fields.process}</td>
+                <td></td>
               </tr>
             </tbody>
           </Table>

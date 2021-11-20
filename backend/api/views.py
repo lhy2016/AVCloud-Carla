@@ -142,7 +142,13 @@ def rent_vehicle(request):
 
     rental_obj = Rental.objects.get(id=rental.id)
     serialized_rental = serializers.serialize('json', [ rental_obj, ])
-    return Response(serialized_rental, status=status.HTTP_200_OK)
+    import json
+    temp = json.loads(serialized_rental)
+    temp[0]["fields"]["name"] = vehicle_obj.name
+    temp[0]["fields"]["make"] = vehicle_obj.make
+    temp[0]["fields"]["color"] = vehicle_obj.color
+    print(temp)
+    return Response(json.dumps(temp), status=status.HTTP_200_OK)
 def navigate(agent, vehicle):
     while True:
         if agent.done():
