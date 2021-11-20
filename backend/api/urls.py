@@ -15,7 +15,8 @@ urlpatterns = [
     path('rent_vehicle', views.rent_vehicle, name="rent_vehicle"),
     path('return_vehicle/<int:id>', views.return_vehicle, name="return_vehicle"),
     path('getServiceHistory/', views.getServiceHistory, name = 'get-service-history'), 
-    path('getProcessStatus/<int:id>', views.getProcessStatus, name = 'get-process-status'), 
+    # getthe state ['picking up', 'to destination', 'arrived'] of an active rental record
+    path('getRentalStatus/<int:id>', views.getRentalStatus, name = 'get-rental-status'), 
     path('addServiceRecord/', views.addServiceRecord, name = 'add-service-record'),
     path('getAvailableAV/', views.getAvailableAV, name = 'get-available-av'), 
     path('updateAVstatus/', views.updateAVstatus, name = 'update-av-status'),

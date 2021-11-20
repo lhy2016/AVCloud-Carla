@@ -174,7 +174,7 @@ def updateAVSummary(request, id):
 
 
 @api_view(['GET'])
-def getProcessStatus(request, id):
+def getRentalStatus(request, id):
     process_status = Rental.objects.filter(id=id).only("process")
     serialized_vehicle_process_status = serializers.serialize('json', process_status)
     return HttpResponse(serialized_vehicle_process_status, content_type='application/json')
