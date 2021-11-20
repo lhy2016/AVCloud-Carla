@@ -17,7 +17,8 @@ class RentComponent extends Component {
     super(props);
     this.state = {
       availableVehicles: [],
-      is_renting : (getCookie("active_rental") !== undefined)
+      is_renting : (getCookie("active_rental") !== undefined),
+      active_rental: getCookie("active_rental") !== undefined ? JSON.parse(getCookie("active_rental")) : null ,
     };
   }
 
@@ -41,7 +42,22 @@ class RentComponent extends Component {
           console.error(err);
         });
     } else {
-      console.log("you are reting");
+      var rental_obj = JSON.parse(getCookie("active_rental"));
+
+      axios.get(window.serverPrefix + "vehicles/getRentalStatus/" + rental_obj["pk"])
+      .then((response)=> {
+        if (response.status == 200) {
+          var ret = response.data[0];
+          console.log(ret);
+          ret.fields.process = "aha"
+          this.setState({
+            active_rental: ret
+          });
+        }
+      })
+      .catch((err)=> {
+        console.log(err);
+      })
     }
   }
 
@@ -54,6 +70,8 @@ class RentComponent extends Component {
     return(
       <Container className="content-container">
         <Navbar active="rent"/>
+
+        {!this.state.is_renting ?
         <Row style={{marginTop:"20px"}}>
           <Col md="10">
             <h4>Select the AV you want to rent</h4>
@@ -85,6 +103,33 @@ class RentComponent extends Component {
             </tbody>
           </Table>
         </Row>
+        :
+        <Row style={{marginTop:"20px"}}>
+          <Col md="10">
+            <h4>Your current Rental Vehicle</h4>
+          </Col>
+          <Table striped bordered hover style={{marginTop:"30px"}}>
+            <thead>
+              <tr>
+                  <th>Name</th>
+                  <th>Make</th>
+                  <th>Color</th>
+                  <th>Status</th>
+                  <th>Operation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>{this.state.active_rental.fields.process}</th> 
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+            </tbody>
+          </Table>
+        </Row>
+        }
       </Container>
     );
   }
