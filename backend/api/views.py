@@ -158,6 +158,25 @@ def return_vehicle(request, id):
     serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
     return Response(serialized_vehicle, status=status.HTTP_200_OK)
 
+@api_view(['PUT'])
+def updateAVSummary(request, id):
+    distance = request.data["distance"]
+    duration = request.data["duration"]
+    active_status = request.data["active_status"]
+    time_finished = request.data["time_finished"]
+
+    Rental.objects.filter(id=id).update(distance=distance, duration=duration, active_status=active_status, time_finished=time_finished)
+    vehicle_obj = Rental.objects.get(id=id)
+    serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
+    return Response(serialized_vehicle, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def getProcessStatus(request, id):
+    process_status = Rental.objects.filter(id=id).only("process")
+    serialized_vehicle_process_status = serializers.serialize('json', process_status)
+    return HttpResponse(serialized_vehicle_process_status, content_type='application/json')
+
 """"
 select * from api_vehicle A INNER JOIN api_rental B ON A.id = B.vehicle_id_id;
 """
