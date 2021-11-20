@@ -14,6 +14,10 @@ const GET_VEHICLE_SENSOR_DATA_API = '/vehicles/carlaUpdate/';
 
 const REFRESH_TIME_MS = 1000;
 
+function toFixedDecimalStr(v) {
+  return Number.isNaN(Number(v)) ? 'N/A' : v.toFixed(2);
+}
+
 class TrackComponent extends Component {
   constructor(props) {
     super(props);
@@ -111,17 +115,18 @@ class TrackComponent extends Component {
   showSelectedVehicleSensorData = () => {
     const { sensorDataOfSelectedVehicle = {} } = this.state;
     const { speed, location = {} }  = sensorDataOfSelectedVehicle;
+
     return (
       <Card>
         <Card.Title>Sensor data</Card.Title>
         <Card.Body>
           <Row>
             <Col>Speed</Col>
-            <Col>{speed}</Col>
+            <Col>{toFixedDecimalStr(speed)}</Col>
           </Row>
           <Row>
             <Col>Location</Col>
-            <Col>{`( ${location.x},  ${location.y} )`}</Col>
+            <Col>{`( ${toFixedDecimalStr(location.x)},  ${toFixedDecimalStr(location.y)} )`}</Col>
           </Row>
         </Card.Body>
       </Card>
