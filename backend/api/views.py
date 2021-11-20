@@ -51,7 +51,7 @@ def add_vehicle(request):
     random_point = random.choice(spawn_points)
     carla_vehicle = world.try_spawn_actor(bp, random_point)
     if carla_vehicle != None:
-        carla_vehicle.set_autopilot(True)
+        carla_vehicle.set_autopilot(True,7000)
         vehicle = Vehicle(name=name, make=make, color=color)
         vehicle.save()
         vehicle_obj = Vehicle.objects.get(id=vehicle.id)
@@ -136,7 +136,7 @@ def rent_vehicle(request):
     agent.set_destination(destination)
 
     import traffic.thread as tf_threads
-    thread = threading.Thread(target=navigate, args=(agent, car))
+    thread = threading.Thread(target=navigate, args=(agent, car, rental.id))
     tf_threads.carla_threads.append(thread)
     thread.start()
 
@@ -149,10 +149,36 @@ def rent_vehicle(request):
     temp[0]["fields"]["color"] = vehicle_obj.color
     print(temp)
     return Response(json.dumps(temp), status=status.HTTP_200_OK)
-def navigate(agent, vehicle):
+    
+def navigate(agent, vehicle, rental_id):
     while True:
         if agent.done():
-            print("The target has been reached, stopping the simulation")
+            
+            rental_qs = Rental.objects.filter(id=rental_id)
+            rental_obj = rental_qs.first()
+            process = rental_obj.process
+            if process == "pickingUp":
+                print("Pickup point has been reached, now going to the destination")
+                rental_qs.update(process="toDestination")
+                
+                import sys
+                sys.path.append('carla_client')
+                from agents.navigation.basic_agent import BasicAgent
+                from carla import Location
+                
+                newAgent = BasicAgent(vehicle)
+                dest = rental_obj.dest_coord
+                destX = (int)(dest.split(",")[0])
+                destY = (int)(dest.split(",")[1])
+                destination = Location(x=destX, y=destY, z=0)
+                newAgent.set_destination(destination)
+                navigate(newAgent, vehicle, rental_id)
+            elif process == "toDestination":
+                print("destination has been reached. Stop navigation")
+                from django.utils.timezone import now
+                rental_qs.update(process="arrived", time_finished=now(), active_status=False)
+
+                
             break
         vehicle.apply_control(agent.run_step())
 
@@ -180,8 +206,17 @@ def updateAVSummary(request, id):
 @api_view(['GET'])
 def getRentalStatus(request, id):
     process_status = Rental.objects.filter(id=id).only("process")
+    rental_obj = Rental.objects.filter(id=id).first()
+    vehicle = rental_obj.vehicle_id
+    
     serialized_vehicle_process_status = serializers.serialize('json', process_status)
-    return HttpResponse(serialized_vehicle_process_status, content_type='application/json')
+    import json
+    retArr = json.loads(serialized_vehicle_process_status)
+    retArr[0]["fields"]["name"] = vehicle.name
+    retArr[0]["fields"]["make"] = vehicle.make
+    retArr[0]["fields"]["color"] = vehicle.color
+    temp = json.dumps(retArr)
+    return HttpResponse(temp, content_type='application/json')
 
 """"
 select * from api_vehicle A INNER JOIN api_rental B ON A.id = B.vehicle_id_id;
