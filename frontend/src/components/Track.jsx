@@ -46,7 +46,8 @@ class TrackComponent extends Component {
       const selectedVehicleId = vehicleIds[0];
       newState = Object.assign(newState, { selectedVehicleId });
 
-      return getSensorDataFromServerPromise(selectedVehicleId)
+      const params = { vehicle_id: selectedVehicleId };
+      return axios.get(GET_VEHICLE_SENSOR_DATA_API, { params });
     })
     .then((response) => {
 
@@ -134,7 +135,7 @@ class TrackComponent extends Component {
     const params = { vehicle_id: vehicleId };
     axios.get(GET_VEHICLE_SENSOR_DATA_API, { params })
       .then((response) => {
-        const { status, statusTex, data: sensorData } = response;
+        const { status, statusText, data: sensorData } = response;
         if (status !== 200) throw new Error(`Expect ${GET_VEHICLE_SENSOR_DATA_API} responses 200 instead of ${status}: ${statusText}`);
         this.setState({ sensorDataOfSelectedVehicle: sensorData });
       });
