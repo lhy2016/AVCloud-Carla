@@ -54,7 +54,7 @@ class Property extends Component {
   }
   updateUser = ()=> {
     if (sessionStorage.getItem("user_id") != null) {
-      axios.get(window.serverRoot + "api/users?user_id=" + sessionStorage.getItem("user_id"))
+      axios.get("/api/users?user_id=" + sessionStorage.getItem("user_id"))
       .then((userResponse)=>{
         this.setState({
           user: userResponse.data === null ? {} : userResponse.data,

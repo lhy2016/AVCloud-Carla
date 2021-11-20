@@ -133,7 +133,7 @@ class Result extends Component {
       favorited: false,
     };
     this.postRequest(
-      window.serverRoot + "api/property/query",
+      "/api/property/query",
       this.generateJsonLogic(),
       this.searchOrRedoSearchSuccess
     );
@@ -409,7 +409,7 @@ class Result extends Component {
   updatefavorited = () => {
     var user_id = sessionStorage.getItem("user_id");
     if (user_id != null) {
-      axios.get(window.serverRoot+"api/user/"+ user_id +"/favSearches")
+      axios.get("/api/user/"+ user_id +"/favSearches")
       .then((response)=>{
         var favSearches = JSON.parse(response.data.favSearches);
         var matched = false;
@@ -443,7 +443,7 @@ class Result extends Component {
     var queryString = this.generateQueryString();
     var jsonLogic = this.generateJsonLogic();
     this.postRequest(
-      window.serverRoot + "api/property/query",
+      "/api/property/query",
       jsonLogic,
       this.searchOrRedoSearchSuccess
     );
@@ -506,7 +506,7 @@ class Result extends Component {
     if (sessionStorage.getItem("user") == null) {
       this.props.animator("You need to sign in first","warning");
     } else {
-      axios.put(window.serverRoot + "api/user/" + 
+      axios.put("/api/user/" + 
       sessionStorage.getItem("user_id") + 
       "/removeFavoriteSearch", 
         {"queryStr": this.props.location.search})
@@ -529,7 +529,7 @@ class Result extends Component {
       this.props.animator("Name cannot be empty!", "danger");
     } else {
       var requestObj = {name: this.state.favSearchName, queryStr: this.props.location.search};
-      axios.put(window.serverRoot+"api/user/" + sessionStorage.getItem("user_id") + "/addFavSearch", requestObj)
+      axios.put("/api/user/" + sessionStorage.getItem("user_id") + "/addFavSearch", requestObj)
       .then((response)=>{
         if (response.status === 200 && response.statusText === "OK") {
           this.props.animator("Sucessfully favorited this search!");

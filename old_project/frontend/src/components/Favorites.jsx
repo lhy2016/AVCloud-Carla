@@ -14,7 +14,7 @@ class Favorites extends Component {
     }
     componentDidMount() {
         if (sessionStorage.getItem("user_id") != null) {
-            axios.get(window.serverRoot + "api/users?user_id=" + sessionStorage.getItem("user_id"))
+            axios.get("/api/users?user_id=" + sessionStorage.getItem("user_id"))
             .then((userResponse)=>{
               this.setState({
                 user: userResponse.data === null ? {} : userResponse.data,
@@ -42,7 +42,7 @@ class Favorites extends Component {
             var houses = this.state.user.favorite_houses == null ? [] : this.state.user.favorite_houses;
             if (houses.length > 0) {
                 var logic = this.generateJsonLogic(houses);
-                axios.post(window.serverRoot + "api/property/query", logic)
+                axios.post("/api/property/query", logic)
                 .then((response)=>{
                     this.setState({properties: response.data});
                 })

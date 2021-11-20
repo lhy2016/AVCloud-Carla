@@ -42,10 +42,10 @@ class RentComponent extends Component {
           console.error(err);
         });
     } else {
-      setInterval(
+      var intervalId = setInterval(
         ()=> {
           var rental_obj = JSON.parse(getCookie("active_rental"));
-          axios.get(window.serverPrefix + "vehicles/getRentalStatus/" + rental_obj["pk"])
+          axios.get("/vehicles/getRentalStatus/" + rental_obj["pk"])
           .then((response)=> {
             if (response.status == 200) {
               var ret = response.data[0];
@@ -53,12 +53,16 @@ class RentComponent extends Component {
               this.setState({
                 active_rental: ret
               });
+              if (ret.fields.process === "arrived") {
+                alert("Arrived");
+                clearInterval(intervalId)
+              }
             }
           })
       .catch((err)=> {
         console.log(err);
       })
-        },1000000
+        },1000
       )
       
     }

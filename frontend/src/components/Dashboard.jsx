@@ -18,7 +18,7 @@ function Dashboard(props) {
     const [VehicleList, userRentalList] = useState([]);
 
     const getUserRentalList = () => {
-        axios.get(window.serverPrefix + "vehicles/getUserRentalHistory/" + UserID)
+        axios.get("/vehicles/getUserRentalHistory/" + UserID)
         .then((response)=>{
             console.log("Inside response function")
             // console.log(response.data)
@@ -32,8 +32,8 @@ function Dashboard(props) {
     };
 
     function updateAVs() {
-        var queryAPI = (isAdmin ? "vehicles/getAllAV/" : "vehicles/getAllAV/")
-        axios.get(window.serverPrefix + queryAPI)
+        var queryAPI = (isAdmin ? "/vehicles/getAllAV/" : "/vehicles/getAllAV/")
+        axios.get(queryAPI)
         .then((response)=>{
             var vehicleObjs = response.data;
             vehicleObjs.map((element)=> {
@@ -62,7 +62,7 @@ function Dashboard(props) {
         updateCar({ ...carInput, [name]: value});
     }
     function submitCar() {
-        axios.post(window.serverPrefix+"vehicles/add_vehicle", carInput)
+        axios.post("/vehicles/add_vehicle", carInput)
         .then((response)=> {
             if (response.status == 200) {
                 var car = JSON.parse(response.data)[0]
@@ -85,7 +85,7 @@ function Dashboard(props) {
     }
     function deleteCar(vehicle_id) {
         console.log(vehicle_id);
-        axios.delete(window.serverPrefix+"vehicles/remove/"+vehicle_id)
+        axios.delete("/vehicles/remove/"+vehicle_id)
         .then((response)=> {
             if (response.status === 200) {
                 var car = JSON.parse(response.data)[0]
@@ -116,7 +116,7 @@ function Dashboard(props) {
     }
     function submitStatus() {
          for(var vehicle of AVs.filter((av)=>av.selected)) {
-            axios.post(window.serverPrefix+"vehicles/updateAVstatus/", {"id": vehicle.pk, "status": vehicle.fields.status})
+            axios.post("/vehicles/updateAVstatus/", {"id": vehicle.pk, "status": vehicle.fields.status})
             .then((response) => {
                 if(response.status === 200) {
                     alert.success("Successfully change status of the vehicle " + vehicle.fields.name);
