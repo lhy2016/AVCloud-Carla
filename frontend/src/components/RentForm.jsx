@@ -51,7 +51,7 @@ class RentFromComponent extends Component {
     }
     input["vehicle_id"] = parseInt(this.props.vehicleId)
     input["user_id"] = parseInt(getCookie("userId"))
-    axios.post(window.serverPrefix + "vehicles/rent_vehicle", input)
+    axios.post("/vehicles/rent_vehicle", input)
     .then((response)=>{
       if (response.status == 200) {
         var ret = JSON.parse(response.data)[0];

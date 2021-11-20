@@ -81,7 +81,7 @@ class Header extends Component {
       input["first_name"] = first_name;
       input["last_name"] = last_name;
       this.postRequest(
-        window.serverRoot + "api/user/signup",
+        "/api/user/signup",
         input,
         this.signUpSuccess, this.errorHandler
       );
@@ -466,7 +466,7 @@ class Header extends Component {
                 value="Submit"
                 onClick={() =>
                   this.postRequest(
-                    window.serverRoot + "api/user/login",
+                    "/api/user/login",
                     this.state.loginFormValue,
                     this.loginSuccess, this.errorHandler
                   )

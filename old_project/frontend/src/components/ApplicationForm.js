@@ -113,7 +113,7 @@ class ApplicationForm extends Component {
     console.log(this.state.application);
     axios({
       method: "post",
-      url: window.serverRoot + "api/application/apply",
+      url: "/api/application/apply",
       data: this.state.application,
       headers: {
         "Content-Type": "application/json;charset=UTF-8",
