@@ -11,6 +11,7 @@ from django.core import serializers
 from datetime import datetime
 import random
 from carla_client.Client import Client
+import threading
 # Create your views here.
 
 def homepage(request):
@@ -94,21 +95,60 @@ def mark_unavailable(request, id):
 
 @api_view(['POST'])
 def rent_vehicle(request):
-    time_started = request.POST.get('time_started')
-    time_finished = request.POST.get('time_finished')
-    distance = request.POST.get('distance')
-    duration = request.POST.get('duration')
-    user_id_id = request.POST.get('user_id_id')
-    vehicle_id_id = request.POST.get('vehicle_id_id')
-    active_status = request.POST.get('active_status')
+    
+    print("****RENT_VEHICLE*****")
+    data = request.data
+    
+    pickupX = int(data["pickup"]["x"] * 194)
+    pickupY = int(106 + data["pickup"]["y"] * 200)
+    pickupCoord = str(pickupX) + "," + str(pickupY)
 
-    rental_vehicle = Rental(time_started=time_started, time_finished=time_finished, distance=distance, duration=duration,
-    user_id_id=user_id_id, vehicle_id_id=vehicle_id_id, active_status=active_status)
-    rental_vehicle.save()
-    vehicle_obj = Rental.objects.get(id=rental_vehicle.id)
-    serialized_vehicle = serializers.serialize('json', [ vehicle_obj, ])
+    destX = int(data["dest"]["x"] * 194)
+    destY = int(106 + data["pickup"]["y"] * 200)
+    destCoord = str(destX) + "," + str(destY)
+    
+    userId = data["user_id"]
+    user_obj = User.objects.get(id=userId)
+    
+    vehicleId = data["vehicle_id"]
+    vehicle_obj = Vehicle.objects.get(id=vehicleId)
+    vehicle_name = vehicle_obj.name
 
-    return Response(serialized_vehicle, status=status.HTTP_200_OK)
+    rental = Rental(pickup_coord=pickupCoord, dest_coord=destCoord, user_id=user_obj, vehicle_id=vehicle_obj, active_status=True)
+    rental.save()
+
+    client = Client.instance()
+    world = client.get_world()
+    
+    all_cars = world.get_actors().filter("vehicle.*")
+    carla_car = [car for car in all_cars if car.attributes.get("role_name") == vehicle_name]
+    if len(carla_car) != 1:
+        return Response("Error: Can't find the vehicle you want to rent", status=status.HTTP_400_BAD_REQUEST)
+    
+    car = carla_car[0]
+    import os
+    import sys
+    sys.path.append('carla_client')
+    from agents.navigation.basic_agent import BasicAgent
+    from carla import Location
+    agent = BasicAgent(car)
+    destination = Location(x=pickupX, y=pickupY, z=0)
+    agent.set_destination(destination)
+
+    import traffic.thread as tf_threads
+    thread = threading.Thread(target=navigate, args=(agent, car))
+    tf_threads.carla_threads.append(thread)
+    thread.start()
+
+    rental_obj = Rental.objects.get(id=rental.id)
+    serialized_rental = serializers.serialize('json', [ rental_obj, ])
+    return Response(serialized_rental, status=status.HTTP_200_OK)
+def navigate(agent, vehicle):
+    while True:
+        if agent.done():
+            print("The target has been reached, stopping the simulation")
+            break
+        vehicle.apply_control(agent.run_step())
 
 @api_view(['PUT'])
 def return_vehicle(request, id):

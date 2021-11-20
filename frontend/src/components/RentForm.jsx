@@ -6,12 +6,11 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from "react-bootstrap/Button"
-import Table from 'react-bootstrap/Table';
 import Navbar from "./Navbar";
 import '../css/rentForm.css';
-import {FaMapMarkerAlt} from "react-icons/fa";
-import map from '../imgs/map.jpg';
+import {FaMapMarkerAlt, FaWindows} from "react-icons/fa";
 import "../js/config"
+import { getCookie } from "../js/utilities"
 
 class RentFromComponent extends Component {
   constructor(props) {
@@ -43,14 +42,28 @@ class RentFromComponent extends Component {
   submitCoord = () => {
     var input = {}
     input["pickup"] = {
-      x: this.state.pickupCoord.x / 500,
+      x: this.state.pickupCoord.x / 485,
       y: this.state.pickupCoord.y / 500
     }
     input["dest"] = {
-      x: this.state.destCoord.x / 500,
+      x: this.state.destCoord.x / 485,
       y: this.state.destCoord.y / 500
     }
-    console.log(input)
+    input["vehicle_id"] = parseInt(this.props.vehicleId)
+    input["user_id"] = parseInt(getCookie("userId"))
+    axios.post(window.serverPrefix + "vehicles/rent_vehicle", input)
+    .then((response)=>{
+      if (response.status == 200) {
+        var ret = JSON.parse(response.data)[0];
+        var date = new Date();
+        date.setDate(date.getDate() + 7);
+        var dateString = date.toUTCString()
+        document.cookie = "active_rental=" + JSON.stringify(ret) +"; expires="+dateString+"; path=/";
+        window.location.href = "/rent"
+      }
+    }).catch((err)=> {
+      console.log(err);
+    })
   }
   render() {
     const { vehicleId } = this.props;

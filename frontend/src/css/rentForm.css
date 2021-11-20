@@ -23,10 +23,10 @@
 }
 .map-container {
     height: 500px;
-    width: 500px;
+    width: 485px;
     margin-top:30px;
     background:linear-gradient(0deg, rgba(75, 75, 75, 0.3), rgba(75, 75, 75, 0.3)),url("../imgs/map.jpg");
     background-position: center center;
-    background-size: 100%;
+    background-size: 104%;
     position: relative;
 }
