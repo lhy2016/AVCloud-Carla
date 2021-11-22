@@ -236,7 +236,7 @@ select * from api_vehicle A INNER JOIN api_rental B ON A.id = B.vehicle_id_id;
 """
 @api_view(['GET'])
 def getUserRentalHistory(request, id):
-
+    print(Rental.objects.filter(id=id, active_status=False).select_related("vehicle_id").only("vehicle_id_id__name","vehicle_id_id__make", "vehicle_id_id__color", "time_started", "time_finished", "duration", "distance").query)
     list_of_vehicles=Rental.objects.filter(id=id, active_status=False).select_related("vehicle_id").only("vehicle_id_id__name","vehicle_id_id__make", "vehicle_id_id__color", "time_started", "time_finished", "duration", "distance")
     # get_vehicle_info = Vehicle.objects.filter(id=id)
     serialized_rental_history = RentalVehicleSerializer(list_of_vehicles, many=True)
@@ -262,6 +262,15 @@ def getAVStatus(request):
 
     serialized_vehicle = serializers.serialize('json', list_of_vehilces, content_type='application/json')
     return Response(serialized_vehicle, status=status.HTTP_200_OK)
+
+"""
+    select * from user_user A INNER JOIN api_rental B ON A.id = B.user_id_id;
+"""
+@api_view(['GET'])
+def getNumberOfUsers(request):
+    list_of_users = User.objects.all()
+    users_serialized = serializers.serialize('json', list_of_users)
+    return HttpResponse(users_serialized, content_type='application/json')
 
 keyavID = "vehicle_id"
 keyStatus = 'status'

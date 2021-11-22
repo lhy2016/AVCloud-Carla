@@ -30,6 +30,13 @@ function Navbar(props) {
                     :
                     undefined
                 }
+                { isAdminLoggedIn() ?
+                    <Link to="/statistics" className={props.active === "statistics" ? "active":""}>
+                        User Statistics
+                    </Link>
+                    :
+                    undefined
+                }
             </Col>
             <Col><Button variant="secondary" onClick={logout}>Log out</Button></Col>
         </Row>
