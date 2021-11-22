@@ -272,6 +272,13 @@ def getNumberOfUsers(request):
     users_serialized = serializers.serialize('json', list_of_users)
     return HttpResponse(users_serialized, content_type='application/json')
 
+@api_view(['GET'])
+def getNumberOfActiveRentals(request):
+    number_of_live_rentals = Rental.objects.filter(active_status="t").count()
+    return HttpResponse(number_of_live_rentals, content_type='application/json')
+
+
+
 keyavID = "vehicle_id"
 keyStatus = 'status'
 def getServiceHistory(request): 

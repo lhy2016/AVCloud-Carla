@@ -10,13 +10,15 @@ import '../css/dashboard.css';
 import '../js/config'
 import {getCookie} from '../js/utilities'
 
-const GET_LIST_OF_USERS = '/vehicles/getNumberOfUsers/';
+const GET_LIST_OF_USERS      = '/vehicles/getNumberOfUsers/';
+const NUMBER_OF_LIVE_RENTALS = '/vehicles/getNumberOfActiveRentals/';
 
 class StatisticsComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
       listOfUsers: [],
+      numberOfLiveRentals: 0,
     };
   }
 
@@ -37,6 +39,16 @@ class StatisticsComponent extends Component {
         .catch((err) => {
           console.error(err);
         });
+
+        axios.get(NUMBER_OF_LIVE_RENTALS)
+        .then((response) => {
+          console.log(response.data)
+          const { data: numberOfLiveRentals } = response;
+          this.setState({ numberOfLiveRentals });
+        })
+        .catch((err) => {
+          console.error(err);
+        });  
   }
 
   showAvaliabeVehicles = () => {
@@ -44,7 +56,8 @@ class StatisticsComponent extends Component {
   }
 
   render() {
-    const { listOfUsers } = this.state;
+    const { listOfUsers }         = this.state;
+    const { numberOfLiveRentals } = this.state
     return(
       <Container className="content-container">
         <Navbar active="statistics"/>
@@ -70,7 +83,14 @@ class StatisticsComponent extends Component {
                 )
               }
             </tbody>
+
           </Table>
+        </Row>
+        <Row>
+            <Col md="10">
+                <h4> Current Live Rentals: {numberOfLiveRentals}</h4>
+            </Col>
+            
         </Row>
       </Container>
     );

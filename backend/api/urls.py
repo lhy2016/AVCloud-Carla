@@ -21,6 +21,8 @@ urlpatterns = [
     path('getAvailableAV/', views.getAvailableAV, name = 'get-available-av'), 
     # path("getStatisticsData/", views.getStatisticsData, name="get-statistics-data"),
     path("getNumberOfUsers/", views.getNumberOfUsers, name="get-numbers-of-users"),
+    path("getNumberOfActiveRentals/", views.getNumberOfActiveRentals, name="get-numbers-of-active-rentals"),
+
 
     path('updateAVstatus/', views.updateAVstatus, name = 'update-av-status'),
     path('updateAVSummary/<int:id>', views.updateAVSummary, name = 'update-av-summary'),
