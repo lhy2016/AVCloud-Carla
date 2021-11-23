@@ -151,6 +151,10 @@ class StatisticsComponent extends Component {
     console.log("Array length is:");
     console.log(number_of_live_per_user.length);
     var temp_array = [];
+    for(var i = 0; i < number_of_live_per_user.length; i++){
+        console.log(number_of_live_per_user[i]);
+        temp_array.push(number_of_live_per_user[i]);
+    }
     test_data.datasets[0].data = temp_array;
     console.log(test_data.datasets[0].data);
 
@@ -203,7 +207,7 @@ class StatisticsComponent extends Component {
                 options={{
                   title:{
                     display:true,
-                    text:'List of all current users',
+                    text:'All rental by current users',
                     fontSize:20
                   },
                   legend:{
@@ -219,7 +223,7 @@ class StatisticsComponent extends Component {
           );
     }
     return (
-        renderTimer // Wait for timer to start before rendering
+        renderTimer //Render the dom elements, or, when this.state == false, nothing.
       )
 
    
