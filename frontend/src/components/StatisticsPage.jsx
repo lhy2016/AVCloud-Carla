@@ -203,7 +203,7 @@ class StatisticsComponent extends Component {
                 options={{
                   title:{
                     display:true,
-                    text:'Average Rainfall per month',
+                    text:'List of all current users',
                     fontSize:20
                   },
                   legend:{
