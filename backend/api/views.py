@@ -277,6 +277,24 @@ def getNumberOfActiveRentals(request):
     number_of_live_rentals = Rental.objects.filter(active_status="t").count()
     return HttpResponse(number_of_live_rentals, content_type='application/json')
 
+"""
+    select count(*) from api_rental A INNER JOIN user_user B on A.user_id_id = B.id AND A.active_status = 't' AND B.id = '1';
+"""
+@api_view(['GET'])
+def getNumberOfActiveRentalsPerUser(request):
+    # Get list of all id
+    user_id_list = User.objects.all().only("id", "username")
+    list_of_id_in_order = {}
+    print(f"User id list is: {user_id_list}")
+    for user_id in user_id_list:
+        print(f"TESTING: {user_id.id}")
+        number_of_per_user_rentals = Rental.objects.filter(active_status="t").filter(user_id__id=user_id.id).select_related("user_id").count()
+        list_of_id_in_order[user_id.username] = number_of_per_user_rentals
+
+    print(f"GET LIST OF IDS TEST: {list_of_id_in_order}")
+    dict_to_json = json.dumps(list_of_id_in_order)
+    print(f"Convert dict to json: {dict_to_json}")
+    return HttpResponse(dict_to_json, content_type='application/json')
 
 
 keyavID = "vehicle_id"
