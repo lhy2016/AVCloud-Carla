@@ -4,6 +4,7 @@ import Rent from "./Rent";
 import RentForm from './RentForm';
 import Track from "./Track";
 import MaintenanceRecord from './MaintenanceRecord';
+import Statistics from './StatisticsPage'
 import { positions, Provider } from "react-alert";
 import AlertTemplate from "react-alert-template-basic";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -30,6 +31,8 @@ function App() {
           <Route exact path='/rent/:vehicleId' element={<RentForm />} />
           <Route exact path='/track' element={<Track />} />
           <Route exact path='/maintenancerecord' element={<MaintenanceRecord />} />
+          <Route exact path='/statistics' element={<Statistics />} />
+
         </Routes>
       </Provider>
     </BrowserRouter>

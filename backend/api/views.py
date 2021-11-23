@@ -236,7 +236,7 @@ select * from api_vehicle A INNER JOIN api_rental B ON A.id = B.vehicle_id_id;
 """
 @api_view(['GET'])
 def getUserRentalHistory(request, id):
-
+    print(Rental.objects.filter(id=id, active_status=False).select_related("vehicle_id").only("vehicle_id_id__name","vehicle_id_id__make", "vehicle_id_id__color", "time_started", "time_finished", "duration", "distance").query)
     list_of_vehicles=Rental.objects.filter(id=id, active_status=False).select_related("vehicle_id").only("vehicle_id_id__name","vehicle_id_id__make", "vehicle_id_id__color", "time_started", "time_finished", "duration", "distance")
     # get_vehicle_info = Vehicle.objects.filter(id=id)
     serialized_rental_history = RentalVehicleSerializer(list_of_vehicles, many=True)
@@ -262,6 +262,40 @@ def getAVStatus(request):
 
     serialized_vehicle = serializers.serialize('json', list_of_vehilces, content_type='application/json')
     return Response(serialized_vehicle, status=status.HTTP_200_OK)
+
+"""
+    select * from user_user A INNER JOIN api_rental B ON A.id = B.user_id_id;
+"""
+@api_view(['GET'])
+def getNumberOfUsers(request):
+    list_of_users = User.objects.all()
+    users_serialized = serializers.serialize('json', list_of_users)
+    return HttpResponse(users_serialized, content_type='application/json')
+
+@api_view(['GET'])
+def getNumberOfActiveRentals(request):
+    number_of_live_rentals = Rental.objects.filter(active_status="t").count()
+    return HttpResponse(number_of_live_rentals, content_type='application/json')
+
+"""
+    select count(*) from api_rental A INNER JOIN user_user B on A.user_id_id = B.id AND A.active_status = 't' AND B.id = '1';
+"""
+@api_view(['GET'])
+def getNumberOfActiveRentalsPerUser(request):
+    # Get list of all id
+    user_id_list = User.objects.all().only("id", "username")
+    list_of_id_in_order = {}
+    print(f"User id list is: {user_id_list}")
+    for user_id in user_id_list:
+        print(f"TESTING: {user_id.id}")
+        number_of_per_user_rentals = Rental.objects.filter(active_status="t").filter(user_id__id=user_id.id).select_related("user_id").count()
+        list_of_id_in_order[user_id.username] = number_of_per_user_rentals
+
+    print(f"GET LIST OF IDS TEST: {list_of_id_in_order}")
+    dict_to_json = json.dumps(list_of_id_in_order)
+    print(f"Convert dict to json: {dict_to_json}")
+    return HttpResponse(dict_to_json, content_type='application/json')
+
 
 keyavID = "vehicle_id"
 keyStatus = 'status'
