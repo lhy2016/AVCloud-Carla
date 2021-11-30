@@ -5,6 +5,9 @@ import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import axios from 'axios';
+import {
+  LineChart, Line, YAxis, XAxis, CartesianGrid, Tooltip, Legend,
+} from 'recharts';
 import '../css/dashboard.css';
 import Navbar from './Navbar';
 
@@ -24,6 +27,7 @@ class TrackComponent extends Component {
     this.state = {
       vehicleIds: undefined,
       sensorDataOfSelectedVehicle: undefined,
+      sensorDataHistory: [],
 
       selectedVehicleId: undefined,
     };
@@ -60,7 +64,7 @@ class TrackComponent extends Component {
       if (status !== 200) throw new Error(`Expect ${GET_VEHICLE_SENSOR_DATA_API} responses 200 instead of ${status}: ${statusText}`);
       
       // Save sensorData to new state
-      newState = Object.assign(newState, { sensorDataOfSelectedVehicle: sensorData });
+      newState = Object.assign(newState, { sensorDataOfSelectedVehicle: sensorData, sensorDataHistory: [sensorData] });
     })
     .catch((err) => {
       console.error('[TRACK] Failed to get list of vehicles in componentDidMount', err);
@@ -83,12 +87,32 @@ class TrackComponent extends Component {
     // Mock drop down on change event to reload data from server
     const { selectedVehicleId } = this.state;
     console.log('refreshing ...');
-    this.dropDownOnChangeHandler({
-      target: {
-        name: 'selectedVehicleId',
-        value: selectedVehicleId
-      },
-    });
+    const params = { vehicle_id: selectedVehicleId };
+    axios.get(GET_VEHICLE_SENSOR_DATA_API, { params }, { timeout: Math.round(REFRESH_TIME_MS/2) })
+      .then((response) => {
+        const { status, statusText, data: sensorData } = response;
+        if (status !== 200) throw new Error(`Expect ${GET_VEHICLE_SENSOR_DATA_API} responses 200 instead of ${status}: ${statusText}`);
+        this.setState((state) => {
+          const { sensorDataHistory = [] } = state;
+          sensorDataHistory.push(sensorData);
+          if (sensorDataHistory.length > 10) sensorDataHistory.shift();
+          return { sensorDataOfSelectedVehicle: sensorData, sensorDataHistory };
+        });
+      })
+      .catch((err) => {
+        const { response = {} } = err;
+        const { status } = response;
+        if (status === 500) {
+          // Mock data for demo here
+          const sensorData = { speed: 60 + Math.random() * 5, location: { x: 0.0, y: 0.0 } };
+          this.setState((state) => {
+            const { sensorDataHistory = [] } = state;
+            sensorDataHistory.push(sensorData);
+            if (sensorDataHistory.length > 10) sensorDataHistory.shift();
+            return { sensorDataOfSelectedVehicle: sensorData, sensorDataHistory };
+          });
+        }
+      });
   }
 
   showDropDwonList = () => {
@@ -144,8 +168,27 @@ class TrackComponent extends Component {
       .then((response) => {
         const { status, statusText, data: sensorData } = response;
         if (status !== 200) throw new Error(`Expect ${GET_VEHICLE_SENSOR_DATA_API} responses 200 instead of ${status}: ${statusText}`);
-        this.setState({ sensorDataOfSelectedVehicle: sensorData });
+        this.setState({ sensorDataOfSelectedVehicle: sensorData, sensorDataHistory: [sensorData] });
       });
+  }
+
+  showGraph = () => {
+    const { sensorDataHistory = [] } = this.state;
+    const data = sensorDataHistory.map((sensorData) => ({name: '', value: sensorData.speed}));
+    const color='#0095FF';
+    return (
+      <Row>
+        <LineChart width={600} height={450} data={data}
+          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis />
+          <YAxis label="speed"/>
+          <Tooltip />
+          <Legend />
+          <Line type="monotone" dataKey="value" stroke={color} />
+        </LineChart>
+      </Row>
+    );
   }
 
   render() {
@@ -154,6 +197,7 @@ class TrackComponent extends Component {
         <Navbar active="track"/>
           {this.showDropDwonList()}
           {this.showSelectedVehicleSensorData()}
+          {this.showGraph()}
       </Container>
     );
   }
