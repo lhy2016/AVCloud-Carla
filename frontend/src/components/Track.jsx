@@ -98,20 +98,6 @@ class TrackComponent extends Component {
           if (sensorDataHistory.length > 10) sensorDataHistory.shift();
           return { sensorDataOfSelectedVehicle: sensorData, sensorDataHistory };
         });
-      })
-      .catch((err) => {
-        const { response = {} } = err;
-        const { status } = response;
-        if (status === 500) {
-          // Mock data for demo here
-          const sensorData = { speed: 60 + Math.random() * 5, location: { x: 0.0, y: 0.0 } };
-          this.setState((state) => {
-            const { sensorDataHistory = [] } = state;
-            sensorDataHistory.push(sensorData);
-            if (sensorDataHistory.length > 10) sensorDataHistory.shift();
-            return { sensorDataOfSelectedVehicle: sensorData, sensorDataHistory };
-          });
-        }
       });
   }
 
@@ -177,17 +163,22 @@ class TrackComponent extends Component {
     const data = sensorDataHistory.map((sensorData) => ({name: '', value: sensorData.speed}));
     const color='#0095FF';
     return (
-      <Row>
-        <LineChart width={600} height={450} data={data}
-          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis />
-          <YAxis label="speed"/>
-          <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="value" stroke={color} />
-        </LineChart>
-      </Row>
+      <>
+        <Row>
+          <h4>Speed</h4>
+        </Row>
+        <Row>
+          <LineChart width={600} height={450} data={data}
+            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line type="monotone" dataKey="value" stroke={color} />
+          </LineChart>
+        </Row>
+      </>
     );
   }
 
