@@ -66,11 +66,12 @@ class StatisticsComponent extends Component {
   componentDidMount() {
     setTimeout(function() {
         this.setState({render: true})
-    }.bind(this), 2000)
+    }.bind(this), 1000)
 
       axios.get(GET_LIST_OF_USERS)
         .then((response) => {
-          console.log(response.data)
+          console.log(response.data);
+          hold_labels.length = 0;
           const { data: users } = response;
           const listOfUsers = users.map((users) => {
             const { fields: { username, create_on} } = users;
@@ -118,6 +119,7 @@ class StatisticsComponent extends Component {
         .then((response) => {
             console.log("INSIDE LIVE RENTAL PER USER");
             // console.log(response.data)
+            number_of_live_per_user.length = 0;
             const { data: user_data } = response;
             console.log(user_data)
             Object.keys(user_data).forEach(function(key) {
