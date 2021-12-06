@@ -155,9 +155,29 @@ def rent_vehicle(request):
     return Response(json.dumps(temp), status=status.HTTP_200_OK)
     
 def navigate(agent, vehicle, rental_id):
+    from mongoDB.db import db
+    dbClient = db.instance()
+    
     while True:
+
+        car3dv = vehicle.get_velocity()
+        cartransform = vehicle.get_transform()
+        
+        r_id = str(rental_id)
+        import time;
+        ts = str(time.time())
+        sensor_data = {
+            'rental_id': r_id,
+            'timestamp': ts,
+            'speed':  (3.6 * math.sqrt(car3dv .x**2 + car3dv .y**2 + car3dv .z**2)),  # km/h
+            'location': {
+                'x': cartransform.location.x,
+                'y': cartransform.location.y
+            }
+        }
+        dbClient.rental_sensor.insert_one(sensor_data)
+        
         if agent.done():
-            
             rental_qs = Rental.objects.filter(id=rental_id)
             rental_obj = rental_qs.first()
             process = rental_obj.process
@@ -190,8 +210,6 @@ def navigate(agent, vehicle, rental_id):
                 print("*********SECONDS")
                 print(seconds)
                 rental_qs.update(process="arrived", time_finished=datetime.datetime.now(), active_status=False, duration=seconds)
-
-                
             break
         vehicle.apply_control(agent.run_step())
 
