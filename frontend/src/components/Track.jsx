@@ -10,8 +10,9 @@ import {
 } from 'recharts';
 import '../css/dashboard.css';
 import Navbar from './Navbar';
+import { getUserId, isAdminLoggedIn } from "../js/utilities";
 
-
+const GET_USER_VEHICLES_API = '/vehicles/getUserAV/'
 const GET_VEHICLES_API = '/vehicles/getAllAV/'
 const GET_VEHICLE_SENSOR_DATA_API = '/vehicles/carlaUpdate/';
 
@@ -35,11 +36,16 @@ class TrackComponent extends Component {
 
   componentDidMount() {
     let newState = {};
-    axios.get(GET_VEHICLES_API, {})
+
+    const promise = isAdminLoggedIn() ?
+      axios.get(GET_VEHICLES_API, {}) :
+      axios.get(GET_USER_VEHICLES_API, { params: { userId: getUserId() } });
+
+    promise
     .then((response) => {
       // Parse veheicleIds from response
       const { status, statusText, data: vehicles } = response;
-      if (status !== 200) throw new Error(`Expect ${GET_VEHICLES_API} responses 200 instead of ${status}: ${statusText}`);
+      if (status !== 200) throw new Error(`Expect responses 200 instead of ${status}: ${statusText}`);
       if (!Array.isArray(vehicles)) console.warn('[TRACK] vehicleIds is not an array');
       const vehicleIds = vehicles.map((v) => v.pk);
 
