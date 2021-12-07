@@ -13,6 +13,10 @@ export function getLoggedInUser() {
     return getCookie('loggedUser');
 }
 
+export function getUserId() {
+    return parseInt(getCookie("userId"));
+}
+
 export function isAdminLoggedIn() {
     return getLoggedInUser() === 'admin';
 }

@@ -317,6 +317,7 @@ def getNumberOfActiveRentalsPerUser(request):
 
 keyavID = "vehicle_id"
 keyStatus = 'status'
+keyuserID = 'userId'
 def getServiceHistory(request): 
     # get the dictionary from httpRequest->QueruDict
     # QueryDict.get(key, default=None)
@@ -354,6 +355,21 @@ def updateAVstatus(request):
     else:
         return HttpResponseBadRequest('No AV updated')
 
+@api_view(['GET'])
+def getUserAV(request):
+    userID = request.GET.get(keyuserID, 1) 
+    users = User.objects.filter(pk = userID)
+    user = users.get()
+    rents = Rental.objects.filter(user_id = user, active_status = True, vehicle_id__isnull=False)
+    if rents: 
+        rent = rents.get()
+        if rent:
+            avID = rent.vehicle_id
+            thequeryset_json = serializers.serialize('json', {avID})
+            return HttpResponse(thequeryset_json, content_type='application/json')
+    thequeryset_json = serializers.serialize('json', {})
+    return HttpResponse(thequeryset_json, content_type='application/json')
+
 def getAllAV(request): 
     avs = Vehicle.objects.all()
     print(avs)
@@ -373,7 +389,7 @@ def carlaUpdate(request):
     carla_car = [car for car in all_cars if car.attributes.get("role_name") == vehicle_name]
     if len(carla_car) != 1:
         print("cannot find vehicle")
-        return HttpResponseBadRequest("Error: Can't find the vehicle you want to rent")
+        return HttpResponseBadRequest("Cannot get the status of vehicle")
     print("get car")
     car = carla_car[0]
 

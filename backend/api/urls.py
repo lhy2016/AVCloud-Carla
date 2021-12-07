@@ -26,6 +26,7 @@ urlpatterns = [
     path('updateAVstatus/', views.updateAVstatus, name = 'update-av-status'),
     path('updateAVSummary/<int:id>', views.updateAVSummary, name = 'update-av-summary'),
     path('getAllAV/', views.getAllAV, name = 'get-all-av'),
+    path('getUserAV/', views.getUserAV, name = 'get-user-av'),
     path('getAVStatus/', views.getAVStatus, name='get-av-status'),
     path('getUserRentalHistory/<int:id>', views.getUserRentalHistory, name='user-rented-vehicles'),
     path('carlaUpdate/', views.carlaUpdate, name = 'update-carla-data'),
